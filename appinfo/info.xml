@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<info>
+    <id>domain_manager</id>
+    <name>Domain Manager</name>
+    <namespace>DomainManager</namespace>
+    <description>Minimal dev app for ownCloud</description>
+    <version>0.2.0</version>
+    <dependencies>
+        <owncloud min-version="10" max-version="11"/>
+        <nextcloud min-version="14" max-version="21"/>
+        <database min-version="5.7">mysql</database>
+        <php min-version="7.0" max-version="8.0"/>
+    </dependencies>
+    <migrations>
+        <migration>OCA\DomainManager\Migration</migration>
+    </migrations>
+    <use-migrations>true</use-migrations>
+</info>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="32" height="32" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <!-- Browser window frame -->
+    <rect x="2" y="4" width="28" height="24" rx="2" ry="2" fill="none" stroke="#0082c9" stroke-width="2"/>
+    <!-- Title bar separator -->
+    <line x1="2" y1="10" x2="30" y2="10" stroke="#0082c9" stroke-width="2"/>
+    <!-- Browser control buttons -->
+    <circle cx="6" cy="7" r="1" fill="#0082c9"/>
+    <circle cx="9" cy="7" r="1" fill="#0082c9"/>
+    <circle cx="12" cy="7" r="1" fill="#0082c9"/>
+    <!-- Content lines representing domain listings -->
+    <path d="M8 16 L24 16 M8 20 L20 20 M8 24 L16 24" stroke="#0082c9" stroke-width="2" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,11 @@
+# ownCloud 10 App gitignore
+/appinfo/signature.json
+/build/
+/vendor/
+/composer.lock
+.php_cs.cache
+.phpunit.result.cache
+*~
+*.swp
+*.log
+.DS_Store

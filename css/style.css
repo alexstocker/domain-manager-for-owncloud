@@ -1,0 +1,103 @@
+#app-content {
+    background-color: #fff;
+    margin-left: 0;
+}
+
+#add-domain-form input[type="text"] {
+    min-width: 200px;
+}
+
+#controls {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    height: 44px;
+    display: flex;
+    align-items: center;
+}
+
+#add-domain-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#add-domain-form input[type="text"],
+#add-domain-form select {
+    margin: 0;
+}
+
+#provider-config-fields {
+    display: inline-flex;
+    gap: 5px;
+}
+
+#provider-config-fields input {
+    margin: 0;
+}
+
+#domain-manager-content {
+    padding: 0;
+}
+
+#domains-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#domains-table th {
+    height: 44px;
+    padding: 0 10px;
+    border-bottom: 1px solid #eee;
+    color: #999;
+    font-weight: normal;
+    text-align: left;
+    background-color: #f8f8f8;
+}
+
+#domains-table td.actions-cell {
+    white-space: nowrap;
+    width: 150px;
+}
+
+#domains-table td.column-name {
+    position: relative;
+}
+
+#domains-table td.column-name small {
+    display: block;
+    color: #999;
+}
+
+#domains-table td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+#domains-table tr:hover td {
+    background-color: #fcfcfc;
+}
+
+.domain-input {
+    border: none;
+    background: transparent;
+    width: 100%;
+    padding: 5px;
+}
+
+.domain-input:focus {
+    border: 1px solid #0082c9;
+    background: #fff;
+}
+
+.update-btn, .delete-btn {
+    padding: 5px 10px;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+/* loading indicator for RDAP */
+#domain-input-field.loading {
+    background-image: url('/core/img/loading-small.gif');
+    background-repeat: no-repeat;
+    background-position: right 5px center;
+}

@@ -1,0 +1,21 @@
+{
+    "name": "alexstocker/domain_manager",
+    "description": "Domain Manager app for ownCloud 10, featuring multi-provider support and RDAP integration.",
+    "type": "owncloud-app",
+    "keywords": ["owncloud", "domain", "dns", "cloudflare", "ispconfig", "rdap"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alexander Stocker",
+            "email": "alex@stocker.info"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0 <8.1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "OCA\\DomainManager\\": "lib/"
+        }
+    }
+}
