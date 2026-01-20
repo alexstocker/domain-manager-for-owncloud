@@ -1,5 +1,5 @@
 {
-    "name": "alexstocker/domain_manager",
+    "name": "alexstocker/domain-manager-for-owncloud",
     "description": "Domain Manager app for ownCloud 10, featuring multi-provider support and RDAP integration.",
     "type": "owncloud-app",
     "keywords": ["owncloud", "domain", "dns", "cloudflare", "ispconfig", "rdap"],
