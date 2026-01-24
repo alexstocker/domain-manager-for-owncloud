@@ -33,45 +33,55 @@ $(document).ready(function() {
         $.getJSON(OC.generateUrl('/apps/domain_manager/api/domains'), function(data) {
             tableBody.empty();
             data.forEach(function(domain) {
-                let configStr = '';
-                if (domain.configuration && Object.keys(domain.configuration).length > 0) {
-                    const filteredConfig = Object.assign({}, domain.configuration);
-                    delete filteredConfig.provider;
-                    if (Object.keys(filteredConfig).length > 0) {
-                        configStr = '<br><small>' + JSON.stringify(filteredConfig) + '</small>';
-                    }
-                }
-
-                let providerName = 'none';
-                if (domain.provider && domain.provider !== 'none') {
-                    const provider = providers.find(p => p.id === domain.provider);
-                    providerName = provider ? provider.name : domain.provider;
-                }
-
-                const row = $(
-                    '<tr data-id="' + domain.id + '" data-provider="' + (domain.provider || 'none') + '" data-domain="' + domain.domain + '">' +
-                    '<td class="column-name">' +
-                    '<input type="text" class="domain-input" value="' + domain.domain + '">' +
-                    configStr +
-                    '</td>' +
-                    '<td class="provider-cell">' + providerName + '</td>' +
-                    '<td class="expiration-cell">Loading...</td>' +
-                    '<td>' + domain.created_at + '</td>' +
-                    '<td class="actions-cell">' +
-                    '<button class="update-btn">Update</button>' +
-                    '<button class="delete-btn">Delete</button>' +
-                    '</td>' +
-                    '</tr>'
-                );
-                tableBody.append(row);
-                fetchRdapInfo(row, domain.domain);
+                appendDomainToTable(domain);
+            });
+            // Trigger lookup for all domains after they are in the DOM
+            tableBody.find('tr').each(function() {
+                const row = $(this);
+                const domainName = row.data('domain');
+                fetchLookupInfo(row, domainName);
             });
         }).fail(function(xhr) {
             handleError(xhr, 'Error fetching domains');
         });
     }
 
-    function fetchRdapInfo(row, domain) {
+    function appendDomainToTable(domain) {
+        let configStr = '';
+        if (domain.configuration && Object.keys(domain.configuration).length > 0) {
+            const filteredConfig = Object.assign({}, domain.configuration);
+            delete filteredConfig.provider;
+            if (Object.keys(filteredConfig).length > 0) {
+                configStr = '<br><small>' + JSON.stringify(filteredConfig) + '</small>';
+            }
+        }
+
+        let providerName = 'none';
+        if (domain.provider && domain.provider !== 'none') {
+            const provider = providers.find(p => p.id === domain.provider);
+            providerName = provider ? provider.name : domain.provider;
+        }
+
+        const row = $(
+            '<tr data-id="' + domain.id + '" data-provider="' + (domain.provider || 'none') + '" data-domain="' + domain.domain + '">' +
+            '<td class="column-name">' +
+            '<input type="text" class="domain-input" value="' + domain.domain + '">' +
+            configStr +
+            '</td>' +
+            '<td class="provider-cell">' + providerName + '</td>' +
+            '<td class="expiration-cell">Loading...</td>' +
+            '<td>' + domain.created_at + '</td>' +
+            '<td class="actions-cell">' +
+            '<button class="update-btn">Update</button>' +
+            '<button class="delete-btn">Delete</button>' +
+            '</td>' +
+            '</tr>'
+        );
+        tableBody.append(row);
+        return row;
+    }
+
+    function fetchLookupInfo(row, domain) {
         const expirationCell = row.find('.expiration-cell');
         const providerCell = row.find('.provider-cell');
         
@@ -182,7 +192,7 @@ $(document).ready(function() {
                 type: 'DELETE',
                 data: { providerId: providerId, requesttoken: OC.requestToken },
                 success: function() {
-                    fetchDomains();
+                    row.remove();
                     if (typeof OC.Notification !== 'undefined') {
                         OC.Notification.showTemporary('Domain deleted');
                     }
@@ -190,26 +200,6 @@ $(document).ready(function() {
                 error: function(xhr) {
                     handleError(xhr, 'Error deleting domain');
                 }
-            });
-        }
-    });
-
-    $('#add-domain-form input[name="domain"]').on('blur', function() {
-        const domain = $(this).val().trim();
-        if (isValidDomain(domain)) {
-            const domainInput = $(this);
-            domainInput.addClass('loading');
-
-            $.getJSON(OC.generateUrl('/apps/domain_manager/api/lookup/' + domain), function(data) {
-                domainInput.removeClass('loading');
-                if (data && data.identifiedProvider && data.identifiedProvider !== 'none') {
-                    $('#provider-select').val(data.identifiedProvider).trigger('change');
-                    if (typeof OC.Notification !== 'undefined') {
-                        OC.Notification.showTemporary('Provider identified as ' + data.identifiedProvider + ' via RDAP');
-                    }
-                }
-            }).fail(function() {
-                domainInput.removeClass('loading');
             });
         }
     });
@@ -241,8 +231,11 @@ $(document).ready(function() {
             configuration: configuration,
             requesttoken: OC.requestToken 
         })
-            .done(function() {
-                fetchDomains();
+            .done(function(newDomain) {
+                // Instead of refetching all, just add the new one
+                const newRow = appendDomainToTable(newDomain);
+                fetchLookupInfo(newRow, newDomain.domain);
+
                 $('#add-domain-form')[0].reset();
                 if (typeof OC.Notification !== 'undefined') {
                     OC.Notification.showTemporary('Domain added');

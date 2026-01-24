@@ -78,7 +78,9 @@ class PageController extends Controller
                 return new DataResponse(['error' => 'Domain already exists'], 400);
             }
             $this->domainService->add($domain, $providerId, $configuration);
-            return new DataResponse(['status' => 'Domain added']);
+            
+            $newDomain = $this->domainService->findByDomain($domain);
+            return new DataResponse($newDomain);
         } catch (\Exception $e) {
             return new DataResponse(['error' => 'Could not add domain: ' . $e->getMessage()], 500);
         }

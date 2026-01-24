@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace OCA\DomainManager\AppInfo;
 
+use OCA\DomainManager\Service\Lookup\CountryCodeTldLookupService;
 use OCP\AppFramework\App;
 use OCA\DomainManager\Controller\PageController;
 use OCA\DomainManager\Controller\SettingsController;
 use OCA\DomainManager\Service\DomainService;
-use OCA\DomainManager\Service\Lookup\CctldLookupService;
 use OCA\DomainManager\Service\Lookup\LookupServiceFacade;
 use OCA\DomainManager\Service\Lookup\RdapLookupService;
 use OCA\DomainManager\Db\DbDomainRepository;
@@ -117,7 +117,7 @@ class Application extends App
             // Register specific services first
             $cctldEnabled = $config->getAppValue('domain_manager', 'cctld_lookup_enabled', 'no');
             if ($cctldEnabled === 'yes') {
-                $facade->registerService('cctld', new CctldLookupService(
+                $facade->registerService('cctld', new CountryCodeTldLookupService(
                     $server->getHTTPClientService()
                 ));
             }
