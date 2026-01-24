@@ -35,6 +35,10 @@ class SettingsController extends Controller
             'robot_url' => $this->config->getAppValue($this->appName, 'robot_url', ''),
             'robot_user' => $this->config->getAppValue($this->appName, 'robot_user', ''),
             'rdap_enabled' => $this->config->getAppValue($this->appName, 'rdap_enabled', 'no'),
+            'cctld_lookup_enabled' => $this->config->getAppValue($this->appName, 'cctld_lookup_enabled', 'no'),
+            'easyname_enabled' => $this->config->getAppValue($this->appName, 'easyname_enabled', 'no'),
+            'easyname_url' => $this->config->getAppValue($this->appName, 'easyname_url', ''),
+            'easyname_user' => $this->config->getAppValue($this->appName, 'easyname_user', ''),
         ];
         return new DataResponse($settings);
     }
@@ -53,6 +57,11 @@ class SettingsController extends Controller
         $robot_user = $this->request->getParam('robot_user');
         $robot_pass = $this->request->getParam('robot_pass');
         $rdap_enabled = $this->request->getParam('rdap_enabled');
+        $cctld_lookup_enabled = $this->request->getParam('cctld_lookup_enabled');
+        $easyname_enabled = $this->request->getParam('easyname_enabled');
+        $easyname_url = $this->request->getParam('easyname_url');
+        $easyname_user = $this->request->getParam('easyname_user');
+        $easyname_key = $this->request->getParam('easyname_key');
 
         if ($backend !== null) {
             $this->config->setAppValue($this->appName, 'backend', $backend);
@@ -89,6 +98,21 @@ class SettingsController extends Controller
         }
         if ($rdap_enabled !== null) {
             $this->config->setAppValue($this->appName, 'rdap_enabled', $rdap_enabled);
+        }
+        if ($cctld_lookup_enabled !== null) {
+            $this->config->setAppValue($this->appName, 'cctld_lookup_enabled', $cctld_lookup_enabled);
+        }
+        if ($easyname_enabled !== null) {
+            $this->config->setAppValue($this->appName, 'easyname_enabled', $easyname_enabled);
+        }
+        if ($easyname_url !== null) {
+            $this->config->setAppValue($this->appName, 'easyname_url', $easyname_url);
+        }
+        if ($easyname_user !== null) {
+            $this->config->setAppValue($this->appName, 'easyname_user', $easyname_user);
+        }
+        if ($easyname_key !== null) {
+            $this->config->setAppValue($this->appName, 'easyname_key', $easyname_key);
         }
 
         return new DataResponse(['status' => 'Settings saved']);

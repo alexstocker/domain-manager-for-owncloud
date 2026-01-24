@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\DomainManager\Controller;
 
 use OCA\DomainManager\Service\DomainService;
+use OCA\DomainManager\Service\Lookup\LookupServiceFacade;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -13,13 +14,13 @@ use OCP\IRequest;
 class PageController extends Controller
 {
     private $domainService;
-    private $rdapRepo;
+    private $lookupServiceFacade;
 
-    public function __construct($appName, IRequest $request, DomainService $domainService, $rdapRepo = null)
+    public function __construct($appName, IRequest $request, DomainService $domainService, LookupServiceFacade $lookupServiceFacade)
     {
         parent::__construct($appName, $request);
         $this->domainService = $domainService;
-        $this->rdapRepo = $rdapRepo;
+        $this->lookupServiceFacade = $lookupServiceFacade;
     }
 
     /**
@@ -117,17 +118,15 @@ class PageController extends Controller
 
     /**
      * @NoAdminRequired
+     * @NoCSRFRequired
      */
-    public function rdapLookup($domain)
+    public function lookup($domain)
     {
-        if (!$this->rdapRepo) {
-            return new DataResponse(['error' => 'RDAP lookup is disabled'], 404);
-        }
         try {
-            $data = $this->rdapRepo->lookup($domain);
+            $data = $this->lookupServiceFacade->lookup($domain);
             return new DataResponse($data);
         } catch (\Exception $e) {
-            return new DataResponse(['error' => 'RDAP lookup failed: ' . $e->getMessage()], 500);
+            return new DataResponse(['error' => 'Lookup failed: ' . $e->getMessage()], 500);
         }
     }
 }

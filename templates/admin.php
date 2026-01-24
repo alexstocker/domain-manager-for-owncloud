@@ -64,10 +64,34 @@
             </p>
         </div>
 
-        <h3>RDAP (WHOIS) Lookups</h3>
+        <h3>Easyname</h3>
+        <p>
+            <input type="checkbox" id="easyname-enabled" name="easyname_enabled" value="yes" />
+            <label for="easyname-enabled">Enable Easyname Provider</label>
+        </p>
+        <div class="easyname-details">
+            <p>
+                <label for="easyname-url">API URL</label>
+                <input type="text" id="easyname-url" name="easyname_url" />
+            </p>
+            <p>
+                <label for="easyname-user">Username</label>
+                <input type="text" id="easyname-user" name="easyname_user" />
+            </p>
+            <p>
+                <label for="easyname-key">API Key</label>
+                <input type="password" id="easyname-key" name="easyname_key" />
+            </p>
+        </div>
+
+        <h3>Lookups</h3>
         <p>
             <input type="checkbox" id="rdap-enabled" name="rdap_enabled" value="yes" />
-            <label for="rdap-enabled">Enable RDAP data display next to domains</label>
+            <label for="rdap-enabled">Enable generic RDAP lookup</label>
+        </p>
+        <p>
+            <input type="checkbox" id="cctld-lookup-enabled" name="cctld_lookup_enabled" value="yes" />
+            <label for="cctld-lookup-enabled">Enable ccTLD-specific lookup (.at, .de)</label>
         </p>
 
         <p>

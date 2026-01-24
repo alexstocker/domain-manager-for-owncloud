@@ -10,7 +10,7 @@ return [
         ['name' => 'page#addDomain', 'url' => '/api/domains/add', 'verb' => 'POST'],
         ['name' => 'page#updateDomain', 'url' => '/api/domains/{id}', 'verb' => 'PUT'],
         ['name' => 'page#deleteDomain', 'url' => '/api/domains/{id}', 'verb' => 'DELETE'],
-        ['name' => 'page#rdapLookup', 'url' => '/api/rdap/{domain}', 'verb' => 'GET'],
+        ['name' => 'page#lookup', 'url' => '/api/lookup/{domain}', 'verb' => 'GET'],
         ['name' => 'settings#getSettings', 'url' => '/api/settings', 'verb' => 'GET'],
         ['name' => 'settings#setSettings', 'url' => '/api/settings', 'verb' => 'POST']
     ]

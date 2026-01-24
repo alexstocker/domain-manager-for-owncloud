@@ -14,6 +14,7 @@ $(document).ready(function() {
             $('#robot-url').val(data.robot_url);
             $('#robot-user').val(data.robot_user);
             $('#rdap-enabled').prop('checked', data.rdap_enabled === 'yes');
+            $('#cctld-lookup-enabled').prop('checked', data.cctld_lookup_enabled === 'yes');
         });
     }
 
@@ -34,6 +35,7 @@ $(document).ready(function() {
             robot_user: $('#robot-user').val(),
             robot_pass: $('#robot-pass').val(),
             rdap_enabled: $('#rdap-enabled').is(':checked') ? 'yes' : 'no',
+            cctld_lookup_enabled: $('#cctld-lookup-enabled').is(':checked') ? 'yes' : 'no',
             requesttoken: OC.requestToken
         };
 

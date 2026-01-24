@@ -75,7 +75,7 @@ $(document).ready(function() {
         const expirationCell = row.find('.expiration-cell');
         const providerCell = row.find('.provider-cell');
         
-        $.getJSON(OC.generateUrl('/apps/domain_manager/api/rdap/' + domain), function(data) {
+        $.getJSON(OC.generateUrl('/apps/domain_manager/api/lookup/' + domain), function(data) {
             if (data) {
                 if (data.events) {
                     const expirationEvent = data.events.find(e => e.eventAction === 'expiration');
@@ -200,7 +200,7 @@ $(document).ready(function() {
             const domainInput = $(this);
             domainInput.addClass('loading');
 
-            $.getJSON(OC.generateUrl('/apps/domain_manager/api/rdap/' + domain), function(data) {
+            $.getJSON(OC.generateUrl('/apps/domain_manager/api/lookup/' + domain), function(data) {
                 domainInput.removeClass('loading');
                 if (data && data.identifiedProvider && data.identifiedProvider !== 'none') {
                     $('#provider-select').val(data.identifiedProvider).trigger('change');

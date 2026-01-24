@@ -8,11 +8,14 @@ use OCP\AppFramework\App;
 use OCA\DomainManager\Controller\PageController;
 use OCA\DomainManager\Controller\SettingsController;
 use OCA\DomainManager\Service\DomainService;
+use OCA\DomainManager\Service\Lookup\CctldLookupService;
+use OCA\DomainManager\Service\Lookup\LookupServiceFacade;
+use OCA\DomainManager\Service\Lookup\RdapLookupService;
 use OCA\DomainManager\Db\DbDomainRepository;
+use OCA\DomainManager\Db\EasynameDomainRepository;
 use OCA\DomainManager\Db\RemoteDomainRepository;
 use OCA\DomainManager\Db\ISPConfigDomainRepository;
 use OCA\DomainManager\Db\CloudflareDomainRepository;
-use OCA\DomainManager\Db\RdapDomainRepository;
 use OCA\DomainManager\Db\RobotApiDomainRepository;
 use OCA\DomainManager\Db\DomainProviderManager;
 
@@ -87,16 +90,47 @@ class Application extends App
                 ]);
             }
 
-            $rdapEnabled = $config->getAppValue('domain_manager', 'rdap_enabled', 'no');
-            if ($rdapEnabled === 'yes') {
-                $c->registerService('RdapDomainRepository', function ($container) use ($server) {
-                    return new RdapDomainRepository(
-                        $server->getHTTPClientService()
-                    );
-                });
+            $easynameEnabled = $config->getAppValue('domain_manager', 'easyname_enabled', 'no');
+            if ($easynameEnabled === 'yes') {
+                $apiUrl = $config->getAppValue('domain_manager', 'easyname_url', '');
+                $user = $config->getAppValue('domain_manager', 'easyname_user', '');
+                $key = $config->getAppValue('domain_manager', 'easyname_key', '');
+                $manager->registerProvider('easyname', 'Easyname', new EasynameDomainRepository(
+                    $server->getHTTPClientService(),
+                    $apiUrl,
+                    $user,
+                    $key
+                ), [
+                    ['name' => 'api_url', 'label' => 'API URL', 'type' => 'text', 'default' => $apiUrl],
+                    ['name' => 'username', 'label' => 'Username', 'type' => 'text', 'default' => $user],
+                    ['name' => 'api_key', 'label' => 'API Key', 'type' => 'password', 'default' => $key]
+                ]);
             }
 
             return $manager;
+        });
+
+        $container->registerService('LookupServiceFacade', function ($c) use ($server) {
+            $facade = new LookupServiceFacade();
+            $config = $server->getConfig();
+
+            // Register specific services first
+            $cctldEnabled = $config->getAppValue('domain_manager', 'cctld_lookup_enabled', 'no');
+            if ($cctldEnabled === 'yes') {
+                $facade->registerService('cctld', new CctldLookupService(
+                    $server->getHTTPClientService()
+                ));
+            }
+
+            // Register generic fallback service last
+            $rdapEnabled = $config->getAppValue('domain_manager', 'rdap_enabled', 'no');
+            if ($rdapEnabled === 'yes') {
+                $facade->registerService('rdap', new RdapLookupService(
+                    $server->getHTTPClientService()
+                ));
+            }
+
+            return $facade;
         });
 
         $container->registerService('OCA\DomainManager\Db\IDomainRepository', function ($c) {
@@ -114,7 +148,7 @@ class Application extends App
                 $c->query('AppName'),
                 $c->query('Request'),
                 $c->query('DomainService'),
-                isset($c['RdapDomainRepository']) ? $c->query('RdapDomainRepository') : null
+                $c->query('LookupServiceFacade')
             );
         });
 

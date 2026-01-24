@@ -17,5 +17,11 @@
         "psr-4": {
             "OCA\\DomainManager\\": "lib/"
         }
-    }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "./packages/*"
+        }
+    ]
 }
