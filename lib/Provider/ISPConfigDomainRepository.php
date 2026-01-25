@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace OCA\DomainManager\Db;
+namespace OCA\DomainManager\Provider;
 
 use OCP\Http\Client\IClientService;
 
-class ISPConfigDomainRepository implements IDomainRepository
+class ISPConfigDomainRepository implements IDomainProviderRepository
 {
     private $httpClient;
     private $apiUrl;

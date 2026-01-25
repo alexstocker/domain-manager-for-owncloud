@@ -12,6 +12,8 @@ return [
         ['name' => 'page#updateDomain', 'url' => '/api/domains/{id}', 'verb' => 'PUT'],
         ['name' => 'page#deleteDomain', 'url' => '/api/domains/{id}', 'verb' => 'DELETE'],
         ['name' => 'page#lookup', 'url' => '/api/lookup/{domain}', 'verb' => 'GET'],
+        ['name' => 'page#listUnownedDomains', 'url' => '/api/domains/unowned', 'verb' => 'GET'],
+        ['name' => 'page#assignOwner', 'url' => '/api/domains/{id}/assign', 'verb' => 'POST'],
         ['name' => 'settings#getSettings', 'url' => '/api/settings', 'verb' => 'GET'],
         ['name' => 'settings#setSettings', 'url' => '/api/settings', 'verb' => 'POST']
     ]

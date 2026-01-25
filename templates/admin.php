@@ -1,5 +1,6 @@
 <?php
 \OCP\Util::addScript('domain_manager', 'settings');
+\OCP\Util::addScript('domain_manager', 'admin_unowned');
 ?>
 
 <div id="domain-manager-settings" class="section">
@@ -12,6 +13,10 @@
                 <option value="local">Local</option>
                 <option value="remote">Remote</option>
             </select>
+        </p>
+        <p>
+            <label for="allowed-groups">Allowed groups (comma-separated, leave empty for all users)</label>
+            <input type="text" id="allowed-groups" name="allowed_groups" placeholder="group1, group2" />
         </p>
         <p>
             <label for="remote-url">Remote API URL</label>
@@ -100,3 +105,11 @@
         </p>
     </form>
 </div>
+
+<div id="domain-manager-admin-section">
+    <h2>Administration</h2>
+    <p><a href="#domain-manager-unowned">Manage unowned domains</a></p>
+</div>
+
+<?php // include the unowned admin panel directly so the anchor exists and the JS can run ?>
+<?php include __DIR__ . '/admin_unowned.php'; ?>

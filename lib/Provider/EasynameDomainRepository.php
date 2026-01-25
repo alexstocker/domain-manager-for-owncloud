@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace OCA\DomainManager\Db;
+namespace OCA\DomainManager\Provider;
 
 use OCP\Http\Client\IClientService;
 
-class EasynameDomainRepository implements IDomainRepository
+class EasynameDomainRepository implements IDomainProviderRepository
 {
     private $httpClient;
     private $apiUrl;
@@ -50,5 +50,10 @@ class EasynameDomainRepository implements IDomainRepository
     {
         // TODO: Implement API call to delete a domain
         throw new \Exception("EasynameDomainRepository::delete() is not implemented.");
+    }
+
+    public function findById(int $id): ?array
+    {
+        return null;
     }
 }

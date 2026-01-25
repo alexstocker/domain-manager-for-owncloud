@@ -23,7 +23,6 @@ script('domain_manager', 'domainmanager');
                 <th id="headerDomain" class="column-name"><span>Domain</span></th>
                 <th id="headerProvider"><span>Provider</span></th>
                 <th id="headerExpiration"><span>Expiration</span></th>
-                <th id="headerCreated"><span>Created At</span></th>
                 <th id="headerActions"><span>Actions</span></th>
             </tr>
             </thead>
@@ -60,6 +59,14 @@ script('domain_manager', 'domainmanager');
             <button id="detail-refresh-lookup" class="button">Refresh Lookup</button>
             <button id="detail-update" class="button primary">Update</button>
             <button id="detail-delete" class="button destructive">Delete</button>
+        </section>
+        <!-- Inline confirmation UI shown when user clicks Delete -->
+        <section id="detail-delete-confirm" class="drawer-section delete-confirm hidden" aria-hidden="true">
+            <p>Are you sure you want to permanently delete this domain?</p>
+            <div class="delete-confirm-actions">
+                <button id="detail-delete-confirm-button" class="button destructive">Yes, delete</button>
+                <button id="detail-delete-cancel-button" class="button">Cancel</button>
+            </div>
         </section>
     </div>
 </div>

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace OCA\DomainManager\Db;
+namespace OCA\DomainManager\Provider;
 
 use OCP\Http\Client\IClientService;
 
-class RdapDomainRepository implements IDomainRepository
+class RdapDomainRepository implements \OCA\DomainManager\Provider\IDomainProviderRepository, \OCA\DomainManager\Db\IDomainProviderRepository
 {
     private $httpClient;
     private $bootstrapUrl = 'https://rdap.org/domain/';

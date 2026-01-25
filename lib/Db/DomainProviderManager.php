@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace OCA\DomainManager\Db;
 
+use OCA\DomainManager\Provider\IDomainProviderRepository;
+
 class DomainProviderManager
 {
     private $providers = [];
@@ -19,7 +21,7 @@ class DomainProviderManager
         return $this->storageRepository;
     }
 
-    public function registerProvider(string $id, string $name, IDomainRepository $repository, array $configFields = [])
+    public function registerProvider(string $id, string $name, IDomainProviderRepository $repository, array $configFields = [])
     {
         $this->providers[$id] = [
             'name' => $name,
@@ -41,7 +43,7 @@ class DomainProviderManager
         return $result;
     }
 
-    public function getRepository(string $id): ?IDomainRepository
+    public function getRepository(string $id): ?IDomainProviderRepository
     {
         return isset($this->providers[$id]) ? $this->providers[$id]['repository'] : null;
     }

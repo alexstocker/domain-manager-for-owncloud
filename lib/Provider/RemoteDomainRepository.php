@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace OCA\DomainManager\Db;
+namespace OCA\DomainManager\Provider;
 
 use OCP\Http\Client\IClientService;
 
-class RemoteDomainRepository implements IDomainRepository
+class RemoteDomainRepository implements IDomainProviderRepository
 {
     private $httpClient;
     private $apiUrl;
@@ -49,5 +49,16 @@ class RemoteDomainRepository implements IDomainRepository
     public function delete(int $id): void
     {
         $this->httpClient->delete($this->apiUrl . '/domains/' . $id);
+    }
+
+    public function findById(int $id): ?array
+    {
+        try {
+            $response = $this->httpClient->get($this->apiUrl . '/domains/' . $id);
+            $data = json_decode($response->getBody(), true);
+            return (isset($data['id']) || isset($data['domain'])) ? $data : null;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 }

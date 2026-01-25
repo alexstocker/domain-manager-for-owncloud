@@ -11,18 +11,21 @@ All notable changes to the Domain Manager app will be documented in this file.
 - **Configuration Options**: Added `cctld_lookup_enabled` and `easyname_enabled` settings to the admin panel.
 - **Domain Details API**: Added a new backend endpoint `GET /api/domains/{id}` (`PageController::getDomain`) and repository method `findById(int $id)` to fetch a single domain by id with provider metadata.
 - **Right-side Details Drawer UI**: Implemented a right-side drawer in `templates/main.php` with a details view, configuration display and lookup events; wired in `js/domainmanager.js` to open on demand.
+- **Owner column & per-user domains**: Added a nullable `owner` DB column and index to store the owning user's UID on domain records (migration added in `appinfo/Migrations`). This enables efficient per-user listings and owner-based ACLs.
+- **Admin: Unowned Domains Panel & API**: Admins can now list domains with `owner = NULL` and assign an owner or delete them. Backend: `GET /api/domains/unowned`, `POST /api/domains/{id}/assign`. Frontend: `templates/admin_unowned.php` + `js/admin_unowned.js`.
 
 ### Changed
 - **Refactored RDAP Logic**: Moved RDAP lookup functionality from `RdapDomainRepository` to `RdapLookupService` for better separation of concerns.
 - **Automated Lookup Selection**: `PageController::lookup` now automatically selects the appropriate lookup service via `LookupServiceFacade`, removing the need for a `service` parameter in the API call.
 - **UI: Details Trigger & Actions**: Replaced the inline 'Details' button in the domain table with the ownCloud-style icon (`<span class="icon icon-more">`) and moved the Update/Delete actions from the table row into the right-side drawer actions panel.
 - **Frontend Changes**: Updated `js/domainmanager.js` to support the drawer (details fetch, frontend-initiated lookup, update/delete via drawer), adjusted `css/style.css` for the drawer styling, and updated `templates/main.php` markup.
-- **Service API**: Added `DomainService::findById(int $id)` to expose repository lookup by id to controllers.
-- **Composer metadata**: Added `ext-json` and `ext-pdo` to `domain_manager/composer.json` to document required PHP extensions used by the DB and JSON code paths.
+- **Service API**: Added `DomainService::findById(int $id)`, `DomainService::getUnowned()` and `DomainService::setOwner(int, ?string)` to expose repository lookup and admin operations to controllers.
+- **Repository / Provider API split**: Introduced a new `OCA\DomainManager\Provider\IDomainProviderRepository` interface for provider connectors and kept `OCA\DomainManager\Db\IDomainRepository` for local/remote storage. Provider classes were moved/refactored into `lib/Provider/` namespace while DB classes remain in `lib/Db/`.
+- **Composer / tooling**: Added required PHP extensions (`ext-json`, `ext-pdo`) to `composer.json` and added composer-agnostic scripts in the project composer to help run occ migrations inside containers (see README for usage notes).
 
 ### Fixed
 - **Bugfix: Drawer variable initialization**: Fixed a runtime ReferenceError caused by drawer DOM variables being referenced before initialization by moving drawer DOM references and open/close helpers into the module initialization (`js/domainmanager.js`).
-- **Security Enhancement**: Ensured `PageController::lookup` endpoint is properly secured with `@NoAdminRequired` (removing `@PublicPage`) to prevent unauthorized access and incorrect `302` redirects.
+- **Security Enhancement**: Ensured `PageController::lookup` endpoint is properly secured with `@NoAdminRequired` to prevent unauthorized access and incorrect `302` redirects.
 
 ## 0.0.1 (UNRELEASED)
 

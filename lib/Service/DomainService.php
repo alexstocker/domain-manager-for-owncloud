@@ -25,9 +25,46 @@ class DomainService
         return $this->providerManager->getStorageRepository()->findAll();
     }
 
+    /**
+     * Get all domains for a specific user. If $isAdmin is true, return all domains.
+     */
+    public function getAllForUser(?string $userId, bool $isAdmin = false): array
+    {
+        $repo = $this->providerManager->getStorageRepository();
+        if ($isAdmin) {
+            return $repo->findAll();
+        }
+        return $repo->findAllForOwner($userId);
+    }
+
     public function findByDomain(string $domain): ?array
     {
         return $this->providerManager->getStorageRepository()->findByDomain($domain);
+    }
+
+    /**
+     * Find a domain record for a given domain and owner (owner may be null for unowned entries).
+     */
+    public function findByDomainForOwner(string $domain, ?string $owner): ?array
+    {
+        return $this->providerManager->getStorageRepository()->findByDomainAndOwner($domain, $owner);
+    }
+
+    /**
+     * Return domains without owner (admin view)
+     * @return array
+     */
+    public function getUnowned(): array
+    {
+        return $this->providerManager->getStorageRepository()->findUnowned();
+    }
+
+    /**
+     * Set owner on a domain record
+     */
+    public function setOwner(int $id, ?string $owner): void
+    {
+        $this->providerManager->getStorageRepository()->setOwner($id, $owner);
     }
 
     public function findById(int $id): ?array

@@ -39,6 +39,7 @@ class SettingsController extends Controller
             'easyname_enabled' => $this->config->getAppValue($this->appName, 'easyname_enabled', 'no'),
             'easyname_url' => $this->config->getAppValue($this->appName, 'easyname_url', ''),
             'easyname_user' => $this->config->getAppValue($this->appName, 'easyname_user', ''),
+            'allowed_groups' => $this->config->getAppValue($this->appName, 'allowed_groups', ''),
         ];
         return new DataResponse($settings);
     }
@@ -62,6 +63,7 @@ class SettingsController extends Controller
         $easyname_url = $this->request->getParam('easyname_url');
         $easyname_user = $this->request->getParam('easyname_user');
         $easyname_key = $this->request->getParam('easyname_key');
+        $allowed_groups = $this->request->getParam('allowed_groups');
 
         if ($backend !== null) {
             $this->config->setAppValue($this->appName, 'backend', $backend);
@@ -113,6 +115,9 @@ class SettingsController extends Controller
         }
         if ($easyname_key !== null) {
             $this->config->setAppValue($this->appName, 'easyname_key', $easyname_key);
+        }
+        if ($allowed_groups !== null) {
+            $this->config->setAppValue($this->appName, 'allowed_groups', trim((string)$allowed_groups));
         }
 
         return new DataResponse(['status' => 'Settings saved']);

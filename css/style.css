@@ -105,8 +105,8 @@
 
 /* loading indicator for RDAP */
 #domain-input-field.loading {
-    /* loading image removed to avoid hard dependency on core paths; keep subtle background */
-    background-color: #fff url('') no-repeat right 5px center;
+    /* use subtle background color when loading */
+    background-color: #fff;
 }
 
 /* Details drawer styles */
@@ -173,6 +173,30 @@
 .button.destructive {
     background: #d9534f;
     color: #fff;
+}
+
+/* Utility hidden class used by drawer confirmation */
+.hidden {
+    display: none !important;
+}
+
+/* Delete confirmation styling inside drawer */
+.delete-confirm {
+    background: #fff6f6;
+    border: 1px solid #f2dede;
+    padding: 12px;
+    margin-top: 8px;
+}
+
+.delete-confirm .delete-confirm-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+/* ensure drawer-actions hidden state works */
+.drawer-actions.hidden {
+    display: none;
 }
 
 @media (max-width: 600px) {

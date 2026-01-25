@@ -12,11 +12,11 @@ use OCA\DomainManager\Service\DomainService;
 use OCA\DomainManager\Service\Lookup\LookupServiceFacade;
 use OCA\DomainManager\Service\Lookup\RdapLookupService;
 use OCA\DomainManager\Db\DbDomainRepository;
-use OCA\DomainManager\Db\EasynameDomainRepository;
-use OCA\DomainManager\Db\RemoteDomainRepository;
-use OCA\DomainManager\Db\ISPConfigDomainRepository;
-use OCA\DomainManager\Db\CloudflareDomainRepository;
-use OCA\DomainManager\Db\RobotApiDomainRepository;
+use OCA\DomainManager\Provider\EasynameDomainRepository;
+use OCA\DomainManager\Provider\RemoteDomainRepository;
+use OCA\DomainManager\Provider\ISPConfigDomainRepository;
+use OCA\DomainManager\Provider\CloudflareDomainRepository;
+use OCA\DomainManager\Provider\RobotApiDomainRepository;
 use OCA\DomainManager\Db\DomainProviderManager;
 
 class Application extends App
@@ -148,7 +148,10 @@ class Application extends App
                 $c->query('AppName'),
                 $c->query('Request'),
                 $c->query('DomainService'),
-                $c->query('LookupServiceFacade')
+                $c->query('LookupServiceFacade'),
+                $this->getContainer()->getServer()->getConfig(),
+                $this->getContainer()->getServer()->getUserSession(),
+                $this->getContainer()->getServer()->getGroupManager()
             );
         });
 

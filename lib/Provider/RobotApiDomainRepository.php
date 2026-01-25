@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace OCA\DomainManager\Db;
+namespace OCA\DomainManager\Provider;
 
 use OCP\Http\Client\IClientService;
 
-class RobotApiDomainRepository implements IDomainRepository
+class RobotApiDomainRepository implements IDomainProviderRepository
 {
     private $httpClient;
     private $apiUrl;
