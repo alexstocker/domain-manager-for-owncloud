@@ -18,6 +18,12 @@ interface IDomainRepository
     public function findByDomain(string $domain): ?array;
 
     /**
+     * @param int $id
+     * @return array|null
+     */
+    public function findById(int $id): ?array;
+
+    /**
      * @param string $domain
      * @param array $configuration
      * @return void

@@ -8,6 +8,7 @@ return [
         ['name' => 'page#listDomains', 'url' => '/api/domains', 'verb' => 'GET'],
         ['name' => 'page#listProviders', 'url' => '/api/providers', 'verb' => 'GET'],
         ['name' => 'page#addDomain', 'url' => '/api/domains/add', 'verb' => 'POST'],
+        ['name' => 'page#getDomain', 'url' => '/api/domains/{id}', 'verb' => 'GET'],
         ['name' => 'page#updateDomain', 'url' => '/api/domains/{id}', 'verb' => 'PUT'],
         ['name' => 'page#deleteDomain', 'url' => '/api/domains/{id}', 'verb' => 'DELETE'],
         ['name' => 'page#lookup', 'url' => '/api/lookup/{domain}', 'verb' => 'GET'],

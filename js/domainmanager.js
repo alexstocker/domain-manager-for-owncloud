@@ -1,5 +1,23 @@
 $(document).ready(function() {
     const tableBody = $('#domains-table tbody');
+    const providerSelect = $('#provider-select');
+    let selectedDomainId = null;
+    // Drawer DOM references (must exist before using them)
+    const drawer = $('#domain-details-drawer');
+    const drawerDomainName = $('#drawer-domain-name');
+    const detailDomain = $('#detail-domain');
+    const detailProvider = $('#detail-provider');
+    const detailCreated = $('#detail-created');
+    const detailExpiration = $('#detail-expiration');
+    const detailConfiguration = $('#detail-configuration');
+    const detailLookupEvents = $('#detail-lookup-events');
+
+    function openDrawer() {
+        drawer.removeClass('hidden').addClass('visible').attr('aria-hidden', 'false');
+    }
+    function closeDrawer() {
+        drawer.addClass('hidden').removeClass('visible').attr('aria-hidden', 'true');
+    }
 
     function isValidDomain(domain) {
         if (!domain || domain.trim() === '') {
@@ -11,9 +29,9 @@ $(document).ready(function() {
 
     function handleError(xhr, defaultMsg) {
         let errorMsg = defaultMsg || 'An error occurred';
-        if (xhr.responseJSON && xhr.responseJSON.error) {
+        if (xhr && xhr.responseJSON && xhr.responseJSON.error) {
             errorMsg = xhr.responseJSON.error;
-        } else if (xhr.responseText) {
+        } else if (xhr && xhr.responseText) {
             try {
                 const response = JSON.parse(xhr.responseText);
                 if (response.error) {
@@ -72,8 +90,10 @@ $(document).ready(function() {
             '<td class="expiration-cell">Loading...</td>' +
             '<td>' + domain.created_at + '</td>' +
             '<td class="actions-cell">' +
-            '<button class="update-btn">Update</button>' +
-            '<button class="delete-btn">Delete</button>' +
+            '<a class="action action-menu permanent" href="#" data-action="menu" data-original-title="" title="">' +
+            '<span class="icon icon-more details-btn" title="Details"></span>' +
+            '<span class="hidden-visually">Actions</span>' +
+            '</a>' +
             '</td>' +
             '</tr>'
         );
@@ -114,7 +134,6 @@ $(document).ready(function() {
     function fetchProviders() {
         $.getJSON(OC.generateUrl('/apps/domain_manager/api/providers'), function(data) {
             providers = data;
-            const providerSelect = $('#provider-select');
             providerSelect.empty();
             
             providerSelect.append('<option value="none">none</option>');
@@ -129,7 +148,7 @@ $(document).ready(function() {
     }
 
     function renderConfigFields() {
-        const providerId = $('#provider-select').val();
+        const providerId = providerSelect.val();
         const provider = providers.find(p => p.id === providerId);
         const container = $('#provider-config-fields');
         container.empty();
@@ -147,52 +166,104 @@ $(document).ready(function() {
         }
     }
 
-    $('#provider-select').on('change', renderConfigFields);
+    providerSelect.on('change', renderConfigFields);
 
-    tableBody.on('click', '.update-btn', function() {
+    tableBody.on('click', '.details-btn', function() {
         const row = $(this).closest('tr');
         const id = row.data('id');
-        const providerId = row.data('provider');
-        const domain = row.find('.domain-input').val().trim();
-        
-        if (!isValidDomain(domain)) {
-            const errorMsg = 'Invalid domain name or TLD missing';
-            if (typeof OC.Notification !== 'undefined') {
-                OC.Notification.showTemporary(errorMsg);
-            } else {
-                alert(errorMsg);
-            }
-            return;
-        }
+        selectedDomainId = id;
+        // show loading state
+        drawerDomainName.text('Loading...');
+        detailDomain.text('-');
+        detailProvider.text('-');
+        detailCreated.text('-');
+        detailExpiration.text('-');
+        detailConfiguration.text('{}');
+        detailLookupEvents.text('Loading...');
+        openDrawer();
 
-        $.ajax({
-            url: OC.generateUrl('/apps/domain_manager/api/domains/' + id),
-            type: 'PUT',
-            data: { domain: domain, providerId: providerId, requesttoken: OC.requestToken },
-            success: function() {
-                fetchDomains();
-                if (typeof OC.Notification !== 'undefined') {
-                    OC.Notification.showTemporary('Domain updated');
+        $.getJSON(OC.generateUrl('/apps/domain_manager/api/domains/' + id), function(data) {
+            if (data && data.domain) {
+                const d = data.domain;
+                drawerDomainName.text(d.domain);
+                detailDomain.text(d.domain);
+                const providerId = d.provider || 'none';
+                let providerName = providerId;
+                if (data.providerMeta && data.providerMeta.name) {
+                    providerName = data.providerMeta.name;
+                } else {
+                    const providerObj = providers.find(p => p.id === providerId);
+                    if (providerObj) providerName = providerObj.name;
                 }
-            },
-            error: function(xhr) {
-                handleError(xhr, 'Error updating domain');
+                detailProvider.text(providerName);
+                detailCreated.text(d.created_at || '-');
+                // expiration will be fetched via lookup (frontend-initiated)
+                detailExpiration.text('N/A');
+                detailConfiguration.text(JSON.stringify(d.configuration || {}, null, 2));
+
+                // perform lookup request (frontend-initiated)
+                fetchDetailsLookup(d.domain);
+            } else {
+                detailLookupEvents.text('No details available');
             }
+        }).fail(function(xhr) {
+            handleError(xhr, 'Error fetching domain details');
         });
     });
 
-    tableBody.on('click', '.delete-btn', function() {
-        const row = $(this).closest('tr');
-        const id = row.data('id');
-        const providerId = row.data('provider');
+    $('#drawer-close').on('click', function() {
+        closeDrawer();
+    });
 
+    function fetchDetailsLookup(domainName) {
+        detailLookupEvents.text('Loading...');
+        $.getJSON(OC.generateUrl('/apps/domain_manager/api/lookup/' + domainName), function(data) {
+            if (data && data.events) {
+                const ul = $('<ul/>');
+                data.events.forEach(function(e) {
+                    ul.append('<li>' + (e.eventAction || '') + ': ' + (e.eventDate || '') + '</li>');
+                });
+                detailLookupEvents.empty();
+                detailLookupEvents.append(ul);
+                const expirationEvent = data.events.find(e => e.eventAction === 'expiration');
+                if (expirationEvent) {
+                    detailExpiration.text(new Date(expirationEvent.eventDate).toLocaleDateString());
+                } else {
+                    detailExpiration.text('Unknown');
+                }
+            } else {
+                detailLookupEvents.text('N/A');
+                detailExpiration.text('N/A');
+            }
+        }).fail(function() {
+            detailLookupEvents.text('N/A');
+            detailExpiration.text('N/A');
+        });
+    }
+
+    $('#detail-refresh-lookup').on('click', function() {
+        const domainName = detailDomain.text();
+        if (domainName && domainName !== '-') {
+            fetchDetailsLookup(domainName);
+        }
+    });
+
+    $('#detail-delete').on('click', function() {
+        if (!selectedDomainId) {
+            handleError(null, 'Could not determine domain id to delete');
+            return;
+        }
+        const row = tableBody.find('tr[data-id="' + selectedDomainId + '"]');
+        const providerId = row.data('provider');
         if (confirm('Are you sure you want to delete this domain?')) {
             $.ajax({
-                url: OC.generateUrl('/apps/domain_manager/api/domains/' + id),
+                url: OC.generateUrl('/apps/domain_manager/api/domains/' + selectedDomainId),
                 type: 'DELETE',
                 data: { providerId: providerId, requesttoken: OC.requestToken },
                 success: function() {
                     row.remove();
+                    closeDrawer();
+                    selectedDomainId = null;
                     if (typeof OC.Notification !== 'undefined') {
                         OC.Notification.showTemporary('Domain deleted');
                     }
@@ -204,46 +275,34 @@ $(document).ready(function() {
         }
     });
 
-    $('#add-domain-form').on('submit', function(e) {
-        e.preventDefault();
-        const domain = $(this).find('input[name="domain"]').val().trim();
-        const providerId = $(this).find('select[name="providerId"]').val();
-        
-        const configuration = {};
-        $(this).find('input[name^="config_"]').each(function() {
-            const name = $(this).attr('name').replace('config_', '');
-            configuration[name] = $(this).val();
-        });
-
-        if (!isValidDomain(domain)) {
-            const errorMsg = 'Invalid domain name or TLD missing';
-            if (typeof OC.Notification !== 'undefined') {
-                OC.Notification.showTemporary(errorMsg);
-            } else {
-                alert(errorMsg);
-            }
+    $('#detail-update').on('click', function() {
+        if (!selectedDomainId) {
+            handleError(null, 'Could not determine domain id to update');
             return;
         }
-
-        $.post(OC.generateUrl('/apps/domain_manager/api/domains/add'), { 
-            domain: domain, 
-            providerId: providerId, 
-            configuration: configuration,
-            requesttoken: OC.requestToken 
-        })
-            .done(function(newDomain) {
-                // Instead of refetching all, just add the new one
-                const newRow = appendDomainToTable(newDomain);
-                fetchLookupInfo(newRow, newDomain.domain);
-
-                $('#add-domain-form')[0].reset();
+        const row = tableBody.find('tr[data-id="' + selectedDomainId + '"]');
+        const providerId = row.data('provider');
+        const domainVal = row.find('.domain-input').val().trim();
+        if (!isValidDomain(domainVal)) {
+            handleError(null, 'Invalid domain name or TLD missing');
+            return;
+        }
+        $.ajax({
+            url: OC.generateUrl('/apps/domain_manager/api/domains/' + selectedDomainId),
+            type: 'PUT',
+            data: { domain: domainVal, providerId: providerId, requesttoken: OC.requestToken },
+            success: function() {
+                fetchDomains();
+                closeDrawer();
+                selectedDomainId = null;
                 if (typeof OC.Notification !== 'undefined') {
-                    OC.Notification.showTemporary('Domain added');
+                    OC.Notification.showTemporary('Domain updated');
                 }
-            })
-            .fail(function(xhr) {
-                handleError(xhr, 'Error adding domain');
-            });
+            },
+            error: function(xhr) {
+                handleError(xhr, 'Error updating domain');
+            }
+        });
     });
 
     fetchDomains();

@@ -9,13 +9,19 @@ All notable changes to the Domain Manager app will be documented in this file.
 - **ccTLD-Specific Lookup Service**: Added support for `.at` and `.de` domains with dedicated RDAP endpoints.
 - **Easyname Domain Provider (Placeholder)**: Introduced framework for easyname.eu integration, including `EasynameDomainRepository`, corresponding settings in `SettingsController`, and admin UI in `templates/admin.php`.
 - **Configuration Options**: Added `cctld_lookup_enabled` and `easyname_enabled` settings to the admin panel.
+- **Domain Details API**: Added a new backend endpoint `GET /api/domains/{id}` (`PageController::getDomain`) and repository method `findById(int $id)` to fetch a single domain by id with provider metadata.
+- **Right-side Details Drawer UI**: Implemented a right-side drawer in `templates/main.php` with a details view, configuration display and lookup events; wired in `js/domainmanager.js` to open on demand.
 
 ### Changed
 - **Refactored RDAP Logic**: Moved RDAP lookup functionality from `RdapDomainRepository` to `RdapLookupService` for better separation of concerns.
 - **Automated Lookup Selection**: `PageController::lookup` now automatically selects the appropriate lookup service via `LookupServiceFacade`, removing the need for a `service` parameter in the API call.
-- **Documentation Update**: `README.md` updated to reflect new architectural patterns and provide detailed development guidelines for adding new providers and lookup services.
+- **UI: Details Trigger & Actions**: Replaced the inline 'Details' button in the domain table with the ownCloud-style icon (`<span class="icon icon-more">`) and moved the Update/Delete actions from the table row into the right-side drawer actions panel.
+- **Frontend Changes**: Updated `js/domainmanager.js` to support the drawer (details fetch, frontend-initiated lookup, update/delete via drawer), adjusted `css/style.css` for the drawer styling, and updated `templates/main.php` markup.
+- **Service API**: Added `DomainService::findById(int $id)` to expose repository lookup by id to controllers.
+- **Composer metadata**: Added `ext-json` and `ext-pdo` to `domain_manager/composer.json` to document required PHP extensions used by the DB and JSON code paths.
 
 ### Fixed
+- **Bugfix: Drawer variable initialization**: Fixed a runtime ReferenceError caused by drawer DOM variables being referenced before initialization by moving drawer DOM references and open/close helpers into the module initialization (`js/domainmanager.js`).
 - **Security Enhancement**: Ensured `PageController::lookup` endpoint is properly secured with `@NoAdminRequired` (removing `@PublicPage`) to prevent unauthorized access and incorrect `302` redirects.
 
 ## 0.0.1 (UNRELEASED)

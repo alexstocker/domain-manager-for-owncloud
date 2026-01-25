@@ -30,6 +30,11 @@ class DomainService
         return $this->providerManager->getStorageRepository()->findByDomain($domain);
     }
 
+    public function findById(int $id): ?array
+    {
+        return $this->providerManager->getStorageRepository()->findById($id);
+    }
+
     public function add(string $domain, string $providerId, array $configuration = []): void
     {
         $configuration['provider'] = $providerId;

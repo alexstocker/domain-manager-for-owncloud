@@ -31,3 +31,35 @@ script('domain_manager', 'domainmanager');
         </table>
     </div>
 </div>
+
+<!-- Right-side details drawer -->
+<div id="domain-details-drawer" class="drawer hidden" aria-hidden="true" role="dialog" aria-label="Domain details">
+    <div class="drawer-header">
+        <h2 id="drawer-domain-name">Domain details</h2>
+        <button id="drawer-close" class="button">Close</button>
+    </div>
+    <div class="drawer-content">
+        <section class="drawer-section">
+            <h3>Overview</h3>
+            <dl>
+                <dt>Domain</dt><dd id="detail-domain">-</dd>
+                <dt>Provider</dt><dd id="detail-provider">-</dd>
+                <dt>Created At</dt><dd id="detail-created">-</dd>
+                <dt>Expiration</dt><dd id="detail-expiration">-</dd>
+            </dl>
+        </section>
+        <section class="drawer-section">
+            <h3>Configuration</h3>
+            <pre id="detail-configuration">{}</pre>
+        </section>
+        <section class="drawer-section">
+            <h3>Lookup Events</h3>
+            <div id="detail-lookup-events">Loading...</div>
+        </section>
+        <section class="drawer-section drawer-actions">
+            <button id="detail-refresh-lookup" class="button">Refresh Lookup</button>
+            <button id="detail-update" class="button primary">Update</button>
+            <button id="detail-delete" class="button destructive">Delete</button>
+        </section>
+    </div>
+</div>

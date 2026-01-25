@@ -131,4 +131,36 @@ class PageController extends Controller
             return new DataResponse(['error' => 'Lookup failed: ' . $e->getMessage()], 500);
         }
     }
+
+    /**
+     * GET domain details by id
+     */
+    public function getDomain($id)
+    {
+        try {
+            $domain = $this->domainService->findById((int)$id);
+            if ($domain === null) {
+                return new DataResponse(['error' => 'Domain not found'], 404);
+            }
+
+            // enrich with provider meta (name, configFields)
+            $providers = $this->domainService->getProviders();
+            $providerMeta = null;
+            foreach ($providers as $p) {
+                if (isset($p['id']) && $p['id'] === ($domain['provider'] ?? 'none')) {
+                    $providerMeta = $p;
+                    break;
+                }
+            }
+
+            $result = [
+                'domain' => $domain,
+                'providerMeta' => $providerMeta
+            ];
+
+            return new DataResponse($result);
+        } catch (\Exception $e) {
+            return new DataResponse(['error' => 'Could not fetch domain details: ' . $e->getMessage()], 500);
+        }
+    }
 }

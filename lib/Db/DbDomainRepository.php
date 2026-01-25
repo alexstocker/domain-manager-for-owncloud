@@ -52,6 +52,25 @@ class DbDomainRepository implements IDomainRepository
         return null;
     }
 
+    public function findById(int $id): ?array
+    {
+        $query = $this->db->getQueryBuilder();
+        $query->select('*')
+            ->from('domain_manager_domains')
+            ->where($query->expr()->eq('id', $query->createNamedParameter($id, \PDO::PARAM_INT)));
+        $result = $query->execute();
+        $row = $result->fetch();
+        if ($row) {
+            if (isset($row['configuration']) && !empty($row['configuration'])) {
+                $row['configuration'] = json_decode($row['configuration'], true);
+            } else {
+                $row['configuration'] = [];
+            }
+            return $row;
+        }
+        return null;
+    }
+
     public function insert(string $domain, array $configuration = []): void
     {
         $query = $this->db->getQueryBuilder();
