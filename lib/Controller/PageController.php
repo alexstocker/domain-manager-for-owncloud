@@ -217,18 +217,50 @@ class PageController extends Controller
      * @NoAdminRequired
      * @NoCSRFRequired
      */
-    public function lookup($domain)
+    public function lookup($domain, $force = null)
     {
         if (!$this->checkAccess()) {
             return new DataResponse(['error' => 'Access denied'], 403);
         }
         try {
-            $data = $this->lookupServiceFacade->lookup($domain);
-            return new DataResponse($data);
+            $existingDomain = $this->domainService->findByDomain($domain);
+
+            if ($this->forceLookUp($existingDomain, $force)) {
+                // Perform live lookup
+                $data = $this->lookupServiceFacade->lookup($domain);
+
+                // Cache the result if the domain exists in our DB
+                if ($existingDomain) {
+                    $this->domainService->updateLookupData((int)$existingDomain['id'], $data);
+                }
+
+                return new DataResponse($data);
+            }
+
+            return new DataResponse($existingDomain['last_lookup_data']);
         } catch (\Exception $e) {
             return new DataResponse(['error' => 'Lookup failed: ' . $e->getMessage()], 500);
         }
     }
+
+    private function forceLookUp($existingDomain, $force) {
+        if ($existingDomain
+            && isset($existingDomain['last_lookup_data'])
+            && isset($existingDomain['last_lookup_time'])
+        ) {
+            $cacheAge = time() - (int)$existingDomain['last_lookup_time'];
+            // TTL from app settings (seconds). Default 86400 (1 day).
+            $ttl = (int)$this->config->getAppValue($this->appName, 'lookup_cache_ttl', '86400');
+            if ($ttl < 1) {
+                $ttl = 86400;
+            }
+            if ($cacheAge > $ttl || false !== null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     /**
      * GET domain details by id

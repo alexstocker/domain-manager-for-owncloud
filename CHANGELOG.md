@@ -13,10 +13,12 @@ All notable changes to the Domain Manager app will be documented in this file.
 - **Right-side Details Drawer UI**: Implemented a right-side drawer in `templates/main.php` with a details view, configuration display and lookup events; wired in `js/domainmanager.js` to open on demand.
 - **Owner column & per-user domains**: Added a nullable `owner` DB column and index to store the owning user's UID on domain records (migration added in `appinfo/Migrations`). This enables efficient per-user listings and owner-based ACLs.
 - **Admin: Unowned Domains Panel & API**: Admins can now list domains with `owner = NULL` and assign an owner or delete them. Backend: `GET /api/domains/unowned`, `POST /api/domains/{id}/assign`. Frontend: `templates/admin_unowned.php` + `js/admin_unowned.js`.
+- **Lookup cache TTL setting**: Added a configurable app setting `lookup_cache_ttl` (seconds) to control how long lookup results are cached. The admin UI includes an input (templates/admin.php) and frontend wiring (`js/settings.js`); `SettingsController` persists the value (stored sanitized as an integer string). Default fallback is `86400` seconds.
 
 ### Changed
 - **Refactored RDAP Logic**: Moved RDAP lookup functionality from `RdapDomainRepository` to `RdapLookupService` for better separation of concerns.
 - **Automated Lookup Selection**: `PageController::lookup` now automatically selects the appropriate lookup service via `LookupServiceFacade`, removing the need for a `service` parameter in the API call.
+- **Lookup caching configurable**: Replaced the hardcoded cache TTL of `86400` seconds inside `PageController::lookup` with the configurable `lookup_cache_ttl` app setting; the controller validates a minimum of `1` second and falls back to `86400` if the stored value is invalid.
 - **UI: Details Trigger & Actions**: Replaced the inline 'Details' button in the domain table with the ownCloud-style icon (`<span class="icon icon-more">`) and moved the Update/Delete actions from the table row into the right-side drawer actions panel.
 - **Frontend Changes**: Updated `js/domainmanager.js` to support the drawer (details fetch, frontend-initiated lookup, update/delete via drawer), adjusted `css/style.css` for the drawer styling, and updated `templates/main.php` markup.
 - **Service API**: Added `DomainService::findById(int $id)`, `DomainService::getUnowned()` and `DomainService::setOwner(int, ?string)` to expose repository lookup and admin operations to controllers.

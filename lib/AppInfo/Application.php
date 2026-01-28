@@ -92,18 +92,24 @@ class Application extends App
 
             $easynameEnabled = $config->getAppValue('domain_manager', 'easyname_enabled', 'no');
             if ($easynameEnabled === 'yes') {
-                $apiUrl = $config->getAppValue('domain_manager', 'easyname_url', '');
+                $apiUrl = $config->getAppValue('domain_manager', 'easyname_url', 'https://api.easyname.com');
                 $user = $config->getAppValue('domain_manager', 'easyname_user', '');
                 $key = $config->getAppValue('domain_manager', 'easyname_key', '');
+                $authSalt = $config->getAppValue('domain_manager', 'easyname_auth_salt', '');
+                $signingSalt = $config->getAppValue('domain_manager', 'easyname_signing_salt', '');
                 $manager->registerProvider('easyname', 'Easyname', new EasynameDomainRepository(
                     $server->getHTTPClientService(),
                     $apiUrl,
                     $user,
-                    $key
+                    $key,
+                    $authSalt !== '' ? $authSalt : null,
+                    $signingSalt !== '' ? $signingSalt : null
                 ), [
                     ['name' => 'api_url', 'label' => 'API URL', 'type' => 'text', 'default' => $apiUrl],
                     ['name' => 'username', 'label' => 'Username', 'type' => 'text', 'default' => $user],
-                    ['name' => 'api_key', 'label' => 'API Key', 'type' => 'password', 'default' => $key]
+                    ['name' => 'api_key', 'label' => 'API Key', 'type' => 'password', 'default' => $key],
+                    ['name' => 'auth_salt', 'label' => 'Authentication Salt', 'type' => 'password', 'default' => $authSalt],
+                    ['name' => 'signing_salt', 'label' => 'Signing Salt', 'type' => 'password', 'default' => $signingSalt]
                 ]);
             }
 

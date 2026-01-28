@@ -88,4 +88,9 @@ class DomainService
     {
         $this->providerManager->getStorageRepository()->delete($id);
     }
+
+    public function updateLookupData(int $id, array $data): void
+    {
+        $this->providerManager->getStorageRepository()->updateLookupData($id, $data, time());
+    }
 }

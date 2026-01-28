@@ -17,20 +17,19 @@ class DbDomainRepository implements IDomainRepository
 
     public function findAll(): array
     {
-        $query = $this->db->getQueryBuilder();
-        $query->select('*')
+        $qb = $this->db->getQueryBuilder();
+        $qb->select('*')
             ->from('domain_manager_domains');
-        $result = $query->execute();
-
-        $rows = $result->fetchAll();
-        foreach ($rows as &$row) {
-            if (isset($row['configuration']) && !empty($row['configuration'])) {
-                $row['configuration'] = json_decode($row['configuration'], true);
-            } else {
-                $row['configuration'] = [];
+        $cursor = $qb->execute();
+        $rows = $cursor->fetchAll();
+        
+        return array_map(function ($row) {
+            $row['configuration'] = json_decode($row['configuration'], true);
+            if (isset($row['last_lookup_data'])) {
+                $row['last_lookup_data'] = json_decode($row['last_lookup_data'], true);
             }
-        }
-        return $rows;
+            return $row;
+        }, $rows);
     }
 
     public function findAllForOwner(?string $owner): array
@@ -59,17 +58,17 @@ class DbDomainRepository implements IDomainRepository
 
     public function findByDomain(string $domain): ?array
     {
-        $query = $this->db->getQueryBuilder();
-        $query->select('*')
+        $qb = $this->db->getQueryBuilder();
+        $qb->select('*')
             ->from('domain_manager_domains')
-            ->where($query->expr()->eq('domain', $query->createNamedParameter($domain)));
-        $result = $query->execute();
-        $row = $result->fetch();
+            ->where($qb->expr()->eq('domain', $qb->createNamedParameter($domain)));
+        $cursor = $qb->execute();
+        $row = $cursor->fetch();
+
         if ($row) {
-            if (isset($row['configuration']) && !empty($row['configuration'])) {
-                $row['configuration'] = json_decode($row['configuration'], true);
-            } else {
-                $row['configuration'] = [];
+            $row['configuration'] = json_decode($row['configuration'], true);
+            if (isset($row['last_lookup_data'])) {
+                $row['last_lookup_data'] = json_decode($row['last_lookup_data'], true);
             }
             return $row;
         }
@@ -201,5 +200,15 @@ class DbDomainRepository implements IDomainRepository
             ->set('owner', $query->createNamedParameter($owner))
             ->where($query->expr()->eq('id', $query->createNamedParameter($id, \PDO::PARAM_INT)));
         $this->db->executeUpdate($query->getSQL(), $query->getParameters(), $query->getParameterTypes());
+    }
+
+    public function updateLookupData(int $id, array $data, int $timestamp): void
+    {
+        $qb = $this->db->getQueryBuilder();
+        $qb->update('domain_manager_domains')
+            ->set('last_lookup_data', $qb->createNamedParameter(json_encode($data)))
+            ->set('last_lookup_time', $qb->createNamedParameter($timestamp))
+            ->where($qb->expr()->eq('id', $qb->createNamedParameter($id)));
+        $qb->execute();
     }
 }

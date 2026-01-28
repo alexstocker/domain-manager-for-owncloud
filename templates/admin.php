@@ -98,6 +98,10 @@
             <input type="checkbox" id="cctld-lookup-enabled" name="cctld_lookup_enabled" value="yes" />
             <label for="cctld-lookup-enabled">Enable ccTLD-specific lookup (.at, .de)</label>
         </p>
+        <p>
+            <label for="lookup-cache-ttl">Lookup cache TTL (seconds, default 86400)</label>
+            <input type="number" id="lookup-cache-ttl" name="lookup_cache_ttl" min="1" placeholder="86400" />
+        </p>
 
         <p>
             <button id="save-settings-btn" type="submit">Save Settings</button>

@@ -256,9 +256,13 @@ $(document).ready(function() {
         closeDrawer();
     });
 
-    function fetchDetailsLookup(domainName) {
+    function fetchDetailsLookup(domainName, force) {
+        let url = OC.generateUrl('/apps/domain_manager/api/lookup/' + domainName);
+        if (force === true) {
+            url = url + `/force`;
+        }
         detailLookupEvents.text('Loading...');
-        $.getJSON(OC.generateUrl('/apps/domain_manager/api/lookup/' + domainName), function(data) {
+        $.getJSON(url, function(data) {
             if (data && data.events) {
                 const ul = $('<ul/>');
                 data.events.forEach(function(e) {
@@ -285,7 +289,7 @@ $(document).ready(function() {
     $('#detail-refresh-lookup').on('click', function() {
         const domainName = detailDomain.text();
         if (domainName && domainName !== '-') {
-            fetchDetailsLookup(domainName);
+            fetchDetailsLookup(domainName, true);
         }
     });
 

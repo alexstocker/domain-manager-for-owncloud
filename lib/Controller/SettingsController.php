@@ -31,6 +31,7 @@ class SettingsController extends Controller
             'ispconfig_enabled' => $this->config->getAppValue($this->appName, 'ispconfig_enabled', 'no'),
             'ispconfig_url' => $this->config->getAppValue($this->appName, 'ispconfig_url', ''),
             'ispconfig_user' => $this->config->getAppValue($this->appName, 'ispconfig_user', ''),
+            'allowed_groups' => $this->config->getAppValue($this->appName, 'allowed_groups', ''),
             'robot_enabled' => $this->config->getAppValue($this->appName, 'robot_enabled', 'no'),
             'robot_url' => $this->config->getAppValue($this->appName, 'robot_url', ''),
             'robot_user' => $this->config->getAppValue($this->appName, 'robot_user', ''),
@@ -39,7 +40,8 @@ class SettingsController extends Controller
             'easyname_enabled' => $this->config->getAppValue($this->appName, 'easyname_enabled', 'no'),
             'easyname_url' => $this->config->getAppValue($this->appName, 'easyname_url', ''),
             'easyname_user' => $this->config->getAppValue($this->appName, 'easyname_user', ''),
-            'allowed_groups' => $this->config->getAppValue($this->appName, 'allowed_groups', ''),
+            // lookup cache TTL in seconds; default 86400
+            'lookup_cache_ttl' => $this->config->getAppValue($this->appName, 'lookup_cache_ttl', '86400'),
         ];
         return new DataResponse($settings);
     }
@@ -64,6 +66,7 @@ class SettingsController extends Controller
         $easyname_user = $this->request->getParam('easyname_user');
         $easyname_key = $this->request->getParam('easyname_key');
         $allowed_groups = $this->request->getParam('allowed_groups');
+        $lookup_cache_ttl = $this->request->getParam('lookup_cache_ttl');
 
         if ($backend !== null) {
             $this->config->setAppValue($this->appName, 'backend', $backend);
@@ -118,6 +121,10 @@ class SettingsController extends Controller
         }
         if ($allowed_groups !== null) {
             $this->config->setAppValue($this->appName, 'allowed_groups', trim((string)$allowed_groups));
+        }
+        if ($lookup_cache_ttl !== null) {
+            // sanitize: store as integer string, fallback will be applied when reading
+            $this->config->setAppValue($this->appName, 'lookup_cache_ttl', (string)(int)$lookup_cache_ttl);
         }
 
         return new DataResponse(['status' => 'Settings saved']);

@@ -73,4 +73,12 @@ interface IDomainRepository
      * @return void
      */
     public function delete(int $id): void;
+
+    /**
+     * @param int $id
+     * @param array $data
+     * @param int $timestamp
+     * @return void
+     */
+    public function updateLookupData(int $id, array $data, int $timestamp): void;
 }

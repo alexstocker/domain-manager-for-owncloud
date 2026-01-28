@@ -15,6 +15,8 @@ $(document).ready(function() {
             $('#robot-user').val(data.robot_user);
             $('#rdap-enabled').prop('checked', data.rdap_enabled === 'yes');
             $('#cctld-lookup-enabled').prop('checked', data.cctld_lookup_enabled === 'yes');
+            // lookup cache TTL
+            $('#lookup-cache-ttl').val(data.lookup_cache_ttl || '86400');
         });
     }
 
@@ -36,6 +38,7 @@ $(document).ready(function() {
             robot_pass: $('#robot-pass').val(),
             rdap_enabled: $('#rdap-enabled').is(':checked') ? 'yes' : 'no',
             cctld_lookup_enabled: $('#cctld-lookup-enabled').is(':checked') ? 'yes' : 'no',
+            lookup_cache_ttl: $('#lookup-cache-ttl').val(),
             requesttoken: OC.requestToken
         };
 
