@@ -10,7 +10,6 @@ script('domain_manager', 'domainmanager');
             <form id="add-domain-form">
                 <input type="text" name="domain" id="domain-input-field" placeholder="Enter domain" required>
                 <select name="providerId" id="provider-select"></select>
-                <div id="provider-config-fields"></div>
                 <button type="submit" class="button primary">Add Domain</button>
             </form>
         </div>
@@ -46,10 +45,6 @@ script('domain_manager', 'domainmanager');
                 <dt>Created At</dt><dd id="detail-created">-</dd>
                 <dt>Expiration</dt><dd id="detail-expiration">-</dd>
             </dl>
-        </section>
-        <section class="drawer-section">
-            <h3>Configuration</h3>
-            <pre id="detail-configuration">{}</pre>
         </section>
         <section class="drawer-section">
             <h3>Lookup Events</h3>

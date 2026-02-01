@@ -17,6 +17,7 @@ The Domain Manager is a powerful ownCloud application designed to centralize the
 - **Admin Configuration**: Manage global API tokens and provider settings directly from the ownCloud admin panel.
 - **Per-user domain ownership**: Domains may be owned by a specific ownCloud user (nullable `owner` column) — this enables user-scoped listings and owner-only edit/delete operations.
 - **Admin: Unowned Domains Panel**: Admins can list domains that have no owner (`owner = NULL`) and either assign them to users or delete them.
+- **Access Control**: Restrict application access to specific user groups via admin settings.
 
 ## Installation
 
@@ -49,8 +50,10 @@ Note: container names vary by setup — replace `owncloud_server` with your cont
 Navigate to **Settings -> Admin -> Additional** to configure:
 
 - **Default Backend**: Choose between `Local` (ownCloud database) or `Remote` storage.
+- **Allowed Groups**: Restrict access to the app to specific groups (comma-separated).
 - **Provider Credentials**: Set global API tokens and URLs for various providers.
 - **Lookup Services**: Enable or disable generic and ccTLD-specific lookups.
+- **Lookup Cache**: Configure TTL for domain lookup results (default 86400s).
 - **Unowned Domains**: Admins can open the "Manage unowned domains" panel from the same admin page to claim or delete unassigned domains.
 
 ## Development

@@ -14,6 +14,8 @@ All notable changes to the Domain Manager app will be documented in this file.
 - **Owner column & per-user domains**: Added a nullable `owner` DB column and index to store the owning user's UID on domain records (migration added in `appinfo/Migrations`). This enables efficient per-user listings and owner-based ACLs.
 - **Admin: Unowned Domains Panel & API**: Admins can now list domains with `owner = NULL` and assign an owner or delete them. Backend: `GET /api/domains/unowned`, `POST /api/domains/{id}/assign`. Frontend: `templates/admin_unowned.php` + `js/admin_unowned.js`.
 - **Lookup cache TTL setting**: Added a configurable app setting `lookup_cache_ttl` (seconds) to control how long lookup results are cached. The admin UI includes an input (templates/admin.php) and frontend wiring (`js/settings.js`); `SettingsController` persists the value (stored sanitized as an integer string). Default fallback is `86400` seconds.
+- **Access Control**: Added `allowed_groups` setting to restrict application access to specific user groups.
+- **Force Lookup**: Added support for forcing lookup updates via API (bypassing cache).
 
 ### Changed
 - **Refactored RDAP Logic**: Moved RDAP lookup functionality from `RdapDomainRepository` to `RdapLookupService` for better separation of concerns.

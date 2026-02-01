@@ -3,7 +3,7 @@
 ?>
 
 <div id="domain-manager-unowned" class="section">
-    <h2>Unowned Domains</h2>
+    <h2>Orphaned Domains</h2>
     <p>Admins can assign or delete domains that have no owner.</p>
     <table id="unowned-domains-table" class="grid">
         <thead>

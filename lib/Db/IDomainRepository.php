@@ -32,7 +32,7 @@ interface IDomainRepository
     public function findAllForOwner(?string $owner): array;
 
     /**
-     * Find a domain record for a given domain and owner. If $owner is null, find an unowned record.
+     * Find a domain record for a given domain and owner. If $owner is null, find an orphaned record.
      *
      * @param string $domain
      * @param string|null $owner
@@ -44,7 +44,7 @@ interface IDomainRepository
      * Find domains that have no owner assigned.
      * @return array
      */
-    public function findUnowned(): array;
+    public function findOrphaned(): array;
 
     /**
      * Set or clear the owner for a domain record.

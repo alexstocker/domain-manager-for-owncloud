@@ -112,7 +112,7 @@
 
 <div id="domain-manager-admin-section">
     <h2>Administration</h2>
-    <p><a href="#domain-manager-unowned">Manage unowned domains</a></p>
+    <p><a href="#domain-manager-unowned">Manage orphaned domains</a></p>
 </div>
 
 <?php // include the unowned admin panel directly so the anchor exists and the JS can run ?>

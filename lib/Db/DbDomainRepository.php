@@ -174,7 +174,7 @@ class DbDomainRepository implements IDomainRepository
         $this->db->executeUpdate($query->getSQL(), $query->getParameters(), $query->getParameterTypes());
     }
 
-    public function findUnowned(): array
+    public function findOrphaned(): array
     {
         $query = $this->db->getQueryBuilder();
         $query->select('*')

@@ -9,7 +9,6 @@ $(document).ready(function() {
     const detailProvider = $('#detail-provider');
     const detailCreated = $('#detail-created');
     const detailExpiration = $('#detail-expiration');
-    const detailConfiguration = $('#detail-configuration');
     const detailLookupEvents = $('#detail-lookup-events');
 
     function openDrawer() {
@@ -65,15 +64,6 @@ $(document).ready(function() {
     }
 
     function appendDomainToTable(domain) {
-        let configStr = '';
-        if (domain.configuration && Object.keys(domain.configuration).length > 0) {
-            const filteredConfig = Object.assign({}, domain.configuration);
-            delete filteredConfig.provider;
-            if (Object.keys(filteredConfig).length > 0) {
-                configStr = '<br><small>' + JSON.stringify(filteredConfig) + '</small>';
-            }
-        }
-
         let providerName = 'none';
         if (domain.provider && domain.provider !== 'none') {
             const provider = providers.find(p => p.id === domain.provider);
@@ -84,7 +74,6 @@ $(document).ready(function() {
             '<tr data-id="' + domain.id + '" data-provider="' + (domain.provider || 'none') + '" data-domain="' + domain.domain + '">' +
             '<td class="column-name">' +
             '<span class="domain-text">' + domain.domain + '</span>' +
-            configStr +
             '</td>' +
             '<td class="provider-cell">' + providerName + '</td>' +
             '<td class="expiration-cell">Loading...</td>' +
@@ -140,44 +129,16 @@ $(document).ready(function() {
             data.forEach(function(provider) {
                 providerSelect.append('<option value="' + provider.id + '">' + provider.name + '</option>');
             });
-            renderConfigFields();
         }).fail(function(xhr) {
             handleError(xhr, 'Error fetching providers');
         });
     }
-
-    function renderConfigFields() {
-        const providerId = providerSelect.val();
-        const provider = providers.find(p => p.id === providerId);
-        const container = $('#provider-config-fields');
-        container.empty();
-
-        if (provider && provider.configFields) {
-            provider.configFields.forEach(field => {
-                const input = $('<input>', {
-                    type: field.type,
-                    name: 'config_' + field.name,
-                    placeholder: field.label,
-                    value: field.default || ''
-                });
-                container.append(input);
-            });
-        }
-    }
-
-    providerSelect.on('change', renderConfigFields);
 
     // Add Domain form submit handler (reintroduced)
     $('#add-domain-form').on('submit', function(e) {
         e.preventDefault();
         const domain = $(this).find('input[name="domain"]').val().trim();
         const providerId = $(this).find('select[name="providerId"]').val();
-
-        const configuration = {};
-        $(this).find('input[name^="config_"]').each(function() {
-            const name = $(this).attr('name').replace('config_', '');
-            configuration[name] = $(this).val();
-        });
 
         if (!isValidDomain(domain)) {
             const errorMsg = 'Invalid domain name or TLD missing';
@@ -192,7 +153,6 @@ $(document).ready(function() {
         $.post(OC.generateUrl('/apps/domain_manager/api/domains/add'), {
             domain: domain,
             providerId: providerId,
-            configuration: configuration,
             requesttoken: OC.requestToken
         })
         .done(function(newDomain) {
@@ -219,7 +179,6 @@ $(document).ready(function() {
         detailProvider.text('-');
         detailCreated.text('-');
         detailExpiration.text('-');
-        detailConfiguration.text('{}');
         detailLookupEvents.text('Loading...');
         openDrawer();
 
@@ -240,7 +199,6 @@ $(document).ready(function() {
                 detailCreated.text(d.created_at || '-');
                 // expiration will be fetched via lookup (frontend-initiated)
                 detailExpiration.text('N/A');
-                detailConfiguration.text(JSON.stringify(d.configuration || {}, null, 2));
 
                 // perform lookup request (frontend-initiated)
                 fetchDetailsLookup(d.domain);

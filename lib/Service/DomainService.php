@@ -43,7 +43,7 @@ class DomainService
     }
 
     /**
-     * Find a domain record for a given domain and owner (owner may be null for unowned entries).
+     * Find a domain record for a given domain and owner (owner may be null for orphaned entries).
      */
     public function findByDomainForOwner(string $domain, ?string $owner): ?array
     {
@@ -54,9 +54,9 @@ class DomainService
      * Return domains without owner (admin view)
      * @return array
      */
-    public function getUnowned(): array
+    public function getOrphaned(): array
     {
-        return $this->providerManager->getStorageRepository()->findUnowned();
+        return $this->providerManager->getStorageRepository()->findOrphaned();
     }
 
     /**

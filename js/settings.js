@@ -5,6 +5,7 @@ $(document).ready(function() {
     function loadSettings() {
         $.getJSON(OC.generateUrl('/apps/domain_manager/api/settings'), function(data) {
             $('#backend-select').val(data.backend);
+            $('#allowed-groups').val(data.allowed_groups);
             $('#remote-url').val(data.remote_url);
             $('#cloudflare-token').val(data.cloudflare_token);
             $('#ispconfig-enabled').prop('checked', data.ispconfig_enabled === 'yes');
@@ -13,6 +14,10 @@ $(document).ready(function() {
             $('#robot-enabled').prop('checked', data.robot_enabled === 'yes');
             $('#robot-url').val(data.robot_url);
             $('#robot-user').val(data.robot_user);
+            $('#easyname-enabled').prop('checked', data.easyname_enabled === 'yes');
+            $('#easyname-url').val(data.easyname_url);
+            $('#easyname-user').val(data.easyname_user);
+            $('#easyname-key').val(data.easyname_user);
             $('#rdap-enabled').prop('checked', data.rdap_enabled === 'yes');
             $('#cctld-lookup-enabled').prop('checked', data.cctld_lookup_enabled === 'yes');
             // lookup cache TTL
@@ -26,6 +31,7 @@ $(document).ready(function() {
 
         const data = {
             backend: $('#backend-select').val(),
+            allowed_groups: $('#allowed-groups').val(),
             remote_url: $('#remote-url').val(),
             cloudflare_token: $('#cloudflare-token').val(),
             ispconfig_enabled: $('#ispconfig-enabled').is(':checked') ? 'yes' : 'no',
@@ -36,6 +42,10 @@ $(document).ready(function() {
             robot_url: $('#robot-url').val(),
             robot_user: $('#robot-user').val(),
             robot_pass: $('#robot-pass').val(),
+            easyname_enabled: $('#easyname-enabled').is(':checked') ? 'yes' : 'no',
+            easyname_url: $('#easyname-url').val(),
+            easyname_user: $('#easyname-user').val(),
+            easyname_key: $('#easyname-key').val(),
             rdap_enabled: $('#rdap-enabled').is(':checked') ? 'yes' : 'no',
             cctld_lookup_enabled: $('#cctld-lookup-enabled').is(':checked') ? 'yes' : 'no',
             lookup_cache_ttl: $('#lookup-cache-ttl').val(),

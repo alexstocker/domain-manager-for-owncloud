@@ -40,6 +40,7 @@ class SettingsController extends Controller
             'easyname_enabled' => $this->config->getAppValue($this->appName, 'easyname_enabled', 'no'),
             'easyname_url' => $this->config->getAppValue($this->appName, 'easyname_url', ''),
             'easyname_user' => $this->config->getAppValue($this->appName, 'easyname_user', ''),
+            'easyname_key' => $this->config->getAppValue($this->appName, 'easyname_key', ''),
             // lookup cache TTL in seconds; default 86400
             'lookup_cache_ttl' => $this->config->getAppValue($this->appName, 'lookup_cache_ttl', '86400'),
         ];
@@ -86,7 +87,7 @@ class SettingsController extends Controller
         if ($ispconfig_user !== null) {
             $this->config->setAppValue($this->appName, 'ispconfig_user', $ispconfig_user);
         }
-        if ($ispconfig_pass !== null) {
+        if ($ispconfig_pass !== null && $ispconfig_pass !== '') {
             $this->config->setAppValue($this->appName, 'ispconfig_pass', $ispconfig_pass);
         }
         if ($robot_enabled !== null) {
@@ -98,7 +99,7 @@ class SettingsController extends Controller
         if ($robot_user !== null) {
             $this->config->setAppValue($this->appName, 'robot_user', $robot_user);
         }
-        if ($robot_pass !== null) {
+        if ($robot_pass !== null && $robot_pass !== '') {
             $this->config->setAppValue($this->appName, 'robot_pass', $robot_pass);
         }
         if ($rdap_enabled !== null) {
@@ -116,7 +117,7 @@ class SettingsController extends Controller
         if ($easyname_user !== null) {
             $this->config->setAppValue($this->appName, 'easyname_user', $easyname_user);
         }
-        if ($easyname_key !== null) {
+        if ($easyname_key !== null && $easyname_key !== '') {
             $this->config->setAppValue($this->appName, 'easyname_key', $easyname_key);
         }
         if ($allowed_groups !== null) {
