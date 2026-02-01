@@ -3,6 +3,9 @@ style('domain_manager', 'style');
 script('domain_manager', 'domainmanager');
 ?>
 
+<div id="app-navigation">
+    <ul id="navigation-stats"></ul>
+</div>
 
 <div id="app-content">
     <div id="controls">
@@ -21,6 +24,7 @@ script('domain_manager', 'domainmanager');
             <tr>
                 <th id="headerDomain" class="column-name"><span>Domain</span></th>
                 <th id="headerProvider"><span>Provider</span></th>
+                <th id="headerPrice"><span>Price</span></th>
                 <th id="headerExpiration"><span>Expiration</span></th>
                 <th id="headerActions"><span>Actions</span></th>
             </tr>
@@ -44,6 +48,25 @@ script('domain_manager', 'domainmanager');
                 <dt>Provider</dt><dd id="detail-provider">-</dd>
                 <dt>Created At</dt><dd id="detail-created">-</dd>
                 <dt>Expiration</dt><dd id="detail-expiration">-</dd>
+            </dl>
+        </section>
+        <section class="drawer-section">
+            <h3>Billing</h3>
+            <dl>
+                <dt>Price</dt>
+                <dd><input type="number" id="detail-price" step="0.01" min="0" placeholder="0.00"></dd>
+                <dt>Tax Rate</dt>
+                <dd>
+                    <select id="detail-tax-rate">
+                        <option value="0">0%</option>
+                    </select>
+                </dd>
+                <dt>Payment Period</dt>
+                <dd>
+                    <select id="detail-payment-period">
+                        <option value="">Select...</option>
+                    </select>
+                </dd>
             </dl>
         </section>
         <section class="drawer-section">

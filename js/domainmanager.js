@@ -1,6 +1,7 @@
 $(document).ready(function() {
     const tableBody = $('#domains-table tbody');
     const providerSelect = $('#provider-select');
+    const navigationStats = $('#navigation-stats');
     let selectedDomainId = null;
     // Drawer DOM references (must exist before using them)
     const drawer = $('#domain-details-drawer');
@@ -10,6 +11,9 @@ $(document).ready(function() {
     const detailCreated = $('#detail-created');
     const detailExpiration = $('#detail-expiration');
     const detailLookupEvents = $('#detail-lookup-events');
+    const detailPrice = $('#detail-price');
+    const detailTaxRate = $('#detail-tax-rate');
+    const detailPaymentPeriod = $('#detail-payment-period');
 
     function openDrawer() {
         drawer.removeClass('hidden').addClass('visible').attr('aria-hidden', 'false');
@@ -52,6 +56,7 @@ $(document).ready(function() {
             data.forEach(function(domain) {
                 appendDomainToTable(domain);
             });
+            updateNavigationStats(data);
             // Trigger lookup for all domains after they are in the DOM
             tableBody.find('tr').each(function() {
                 const row = $(this);
@@ -63,11 +68,90 @@ $(document).ready(function() {
         });
     }
 
+    function updateNavigationStats(domains) {
+        navigationStats.empty();
+
+        // Total domains
+        const totalDomains = domains.length;
+        navigationStats.append('<li><a href="#">Total Domains<span class="utils">' + totalDomains + '</span></a></li>');
+
+        // Domains by TLD
+        const tldCounts = {};
+        domains.forEach(d => {
+            const parts = d.domain.split('.');
+            if (parts.length > 1) {
+                const tld = parts[parts.length - 1];
+                tldCounts[tld] = (tldCounts[tld] || 0) + 1;
+            }
+        });
+        navigationStats.append('<li class="app-navigation-entry-header">By TLD</li>');
+        for (const [tld, count] of Object.entries(tldCounts)) {
+            navigationStats.append('<li><a href="#">.' + tld + '<span class="utils">' + count + '</span></a></li>');
+        }
+
+        // Domains by Provider
+        const providerCounts = {};
+        const providerPrices = {};
+        let totalPrice = 0;
+        let totalPriceGross = 0;
+
+        domains.forEach(d => {
+            const providerId = d.provider || 'none';
+            let providerName = providerId;
+            if (providerId !== 'none') {
+                const providerObj = providers.find(p => p.id === providerId);
+                if (providerObj) providerName = providerObj.name;
+            }
+            providerCounts[providerName] = (providerCounts[providerName] || 0) + 1;
+
+            // Price calculation
+            if (d.configuration && d.configuration.price) {
+                const price = parseFloat(d.configuration.price);
+                if (!isNaN(price)) {
+                    providerPrices[providerName] = (providerPrices[providerName] || 0) + price;
+                    totalPrice += price;
+
+                    let taxRate = 0;
+                    if (d.configuration.tax_rate) {
+                        taxRate = parseFloat(d.configuration.tax_rate);
+                    }
+                    if (!isNaN(taxRate)) {
+                        totalPriceGross += price * (1 + taxRate / 100);
+                    } else {
+                        totalPriceGross += price;
+                    }
+                }
+            }
+        });
+
+        navigationStats.append('<li class="app-navigation-entry-header">By Provider</li>');
+        for (const [provider, count] of Object.entries(providerCounts)) {
+            navigationStats.append('<li><a href="#">' + provider + '<span class="utils">' + count + '</span></a></li>');
+        }
+
+        navigationStats.append('<li class="app-navigation-entry-header">Costs</li>');
+        navigationStats.append('<li><a href="#">Total Net<span class="utils">' + totalPrice.toFixed(2) + '</span></a></li>');
+        navigationStats.append('<li><a href="#">Total Gross<span class="utils">' + totalPriceGross.toFixed(2) + '</span></a></li>');
+        
+        navigationStats.append('<li class="app-navigation-entry-header">Costs by Provider</li>');
+        for (const [provider, price] of Object.entries(providerPrices)) {
+            navigationStats.append('<li><a href="#">' + provider + '<span class="utils">' + price.toFixed(2) + '</span></a></li>');
+        }
+    }
+
     function appendDomainToTable(domain) {
         let providerName = 'none';
         if (domain.provider && domain.provider !== 'none') {
             const provider = providers.find(p => p.id === domain.provider);
             providerName = provider ? provider.name : domain.provider;
+        }
+
+        let priceDisplay = '-';
+        if (domain.configuration && domain.configuration.price) {
+            priceDisplay = parseFloat(domain.configuration.price).toFixed(2);
+            if (domain.configuration.payment_period) {
+                priceDisplay += ' / ' + domain.configuration.payment_period;
+            }
         }
 
         const row = $(
@@ -76,6 +160,7 @@ $(document).ready(function() {
             '<span class="domain-text">' + domain.domain + '</span>' +
             '</td>' +
             '<td class="provider-cell">' + providerName + '</td>' +
+            '<td class="price-cell">' + priceDisplay + '</td>' +
             '<td class="expiration-cell">Loading...</td>' +
             '<td class="actions-cell">' +
             '<a class="action action-menu permanent" href="#" data-action="menu" data-original-title="" title="">' +
@@ -129,6 +214,8 @@ $(document).ready(function() {
             data.forEach(function(provider) {
                 providerSelect.append('<option value="' + provider.id + '">' + provider.name + '</option>');
             });
+            // Re-fetch domains to ensure provider names are available for stats
+            fetchDomains();
         }).fail(function(xhr) {
             handleError(xhr, 'Error fetching providers');
         });
@@ -163,6 +250,8 @@ $(document).ready(function() {
             if (typeof OC.Notification !== 'undefined') {
                 OC.Notification.showTemporary('Domain added');
             }
+            // Refresh domains to update stats
+            fetchDomains();
         })
         .fail(function(xhr) {
             handleError(xhr, 'Error adding domain');
@@ -180,6 +269,9 @@ $(document).ready(function() {
         detailCreated.text('-');
         detailExpiration.text('-');
         detailLookupEvents.text('Loading...');
+        detailPrice.val('');
+        detailTaxRate.empty();
+        detailPaymentPeriod.empty();
         openDrawer();
 
         $.getJSON(OC.generateUrl('/apps/domain_manager/api/domains/' + id), function(data) {
@@ -199,6 +291,34 @@ $(document).ready(function() {
                 detailCreated.text(d.created_at || '-');
                 // expiration will be fetched via lookup (frontend-initiated)
                 detailExpiration.text('N/A');
+
+                // Billing
+                detailPrice.val(d.configuration.price || '');
+                
+                // Populate tax rates
+                detailTaxRate.append('<option value="">Select...</option>');
+                if (data.taxRates) {
+                    data.taxRates.forEach(function(rate) {
+                        let isSelected = false;
+                        const dbValue = d.configuration.tax_rate;
+                        if (dbValue !== undefined && dbValue !== null && dbValue !== '') {
+                            if (parseFloat(dbValue) === parseFloat(rate)) {
+                                isSelected = true;
+                            }
+                        }
+                        const selected = isSelected ? 'selected' : '';
+                        detailTaxRate.append('<option value="' + rate + '" ' + selected + '>' + rate + '%</option>');
+                    });
+                }
+
+                // Populate payment periods
+                detailPaymentPeriod.append('<option value="">Select...</option>');
+                if (data.paymentPeriods) {
+                    data.paymentPeriods.forEach(function(period) {
+                        const selected = (d.configuration.payment_period == period) ? 'selected' : '';
+                        detailPaymentPeriod.append('<option value="' + period + '" ' + selected + '>' + period + '</option>');
+                    });
+                }
 
                 // perform lookup request (frontend-initiated)
                 fetchDetailsLookup(d.domain);
@@ -289,6 +409,8 @@ $(document).ready(function() {
                 if (typeof OC.Notification !== 'undefined') {
                     OC.Notification.showTemporary('Domain deleted');
                 }
+                // Refresh domains to update stats
+                fetchDomains();
             },
             error: function(xhr) {
                 handleError(xhr, 'Error deleting domain');
@@ -309,10 +431,22 @@ $(document).ready(function() {
             handleError(null, 'Invalid domain name or TLD missing');
             return;
         }
+
+        const configuration = {
+            price: detailPrice.val(),
+            tax_rate: detailTaxRate.val(),
+            payment_period: detailPaymentPeriod.val()
+        };
+
         $.ajax({
             url: OC.generateUrl('/apps/domain_manager/api/domains/' + selectedDomainId),
             type: 'PUT',
-            data: { domain: domainVal, providerId: providerId, requesttoken: OC.requestToken },
+            data: { 
+                domain: domainVal, 
+                providerId: providerId, 
+                configuration: configuration,
+                requesttoken: OC.requestToken 
+            },
             success: function() {
                 fetchDomains();
                 closeDrawer();
@@ -327,6 +461,6 @@ $(document).ready(function() {
         });
     });
 
-    fetchDomains();
+    // Initial fetch is now triggered inside fetchProviders to ensure providers are loaded first
     fetchProviders();
 });

@@ -22,6 +22,8 @@ $(document).ready(function() {
             $('#cctld-lookup-enabled').prop('checked', data.cctld_lookup_enabled === 'yes');
             // lookup cache TTL
             $('#lookup-cache-ttl').val(data.lookup_cache_ttl || '86400');
+            $('#tax-rates').val(data.tax_rates);
+            $('#payment-periods').val(data.payment_periods);
         });
     }
 
@@ -49,6 +51,8 @@ $(document).ready(function() {
             rdap_enabled: $('#rdap-enabled').is(':checked') ? 'yes' : 'no',
             cctld_lookup_enabled: $('#cctld-lookup-enabled').is(':checked') ? 'yes' : 'no',
             lookup_cache_ttl: $('#lookup-cache-ttl').val(),
+            tax_rates: $('#tax-rates').val(),
+            payment_periods: $('#payment-periods').val(),
             requesttoken: OC.requestToken
         };
 

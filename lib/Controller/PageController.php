@@ -320,9 +320,14 @@ class PageController extends Controller
                 }
             }
 
+            $taxRates = $this->config->getAppValue($this->appName, 'tax_rates', '0,10,20');
+            $paymentPeriods = $this->config->getAppValue($this->appName, 'payment_periods', 'monthly,yearly');
+
             $result = [
                 'domain' => $domain,
-                'providerMeta' => $providerMeta
+                'providerMeta' => $providerMeta,
+                'taxRates' => explode(',', $taxRates),
+                'paymentPeriods' => explode(',', $paymentPeriods)
             ];
 
             return new DataResponse($result);

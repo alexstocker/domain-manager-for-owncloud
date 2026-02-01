@@ -43,6 +43,8 @@ class SettingsController extends Controller
             'easyname_key' => $this->config->getAppValue($this->appName, 'easyname_key', ''),
             // lookup cache TTL in seconds; default 86400
             'lookup_cache_ttl' => $this->config->getAppValue($this->appName, 'lookup_cache_ttl', '86400'),
+            'tax_rates' => $this->config->getAppValue($this->appName, 'tax_rates', '0,10,20'),
+            'payment_periods' => $this->config->getAppValue($this->appName, 'payment_periods', 'monthly,yearly'),
         ];
         return new DataResponse($settings);
     }
@@ -68,6 +70,8 @@ class SettingsController extends Controller
         $easyname_key = $this->request->getParam('easyname_key');
         $allowed_groups = $this->request->getParam('allowed_groups');
         $lookup_cache_ttl = $this->request->getParam('lookup_cache_ttl');
+        $tax_rates = $this->request->getParam('tax_rates');
+        $payment_periods = $this->request->getParam('payment_periods');
 
         if ($backend !== null) {
             $this->config->setAppValue($this->appName, 'backend', $backend);
@@ -126,6 +130,12 @@ class SettingsController extends Controller
         if ($lookup_cache_ttl !== null) {
             // sanitize: store as integer string, fallback will be applied when reading
             $this->config->setAppValue($this->appName, 'lookup_cache_ttl', (string)(int)$lookup_cache_ttl);
+        }
+        if ($tax_rates !== null) {
+            $this->config->setAppValue($this->appName, 'tax_rates', $tax_rates);
+        }
+        if ($payment_periods !== null) {
+            $this->config->setAppValue($this->appName, 'payment_periods', $payment_periods);
         }
 
         return new DataResponse(['status' => 'Settings saved']);

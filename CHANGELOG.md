@@ -16,6 +16,7 @@ All notable changes to the Domain Manager app will be documented in this file.
 - **Lookup cache TTL setting**: Added a configurable app setting `lookup_cache_ttl` (seconds) to control how long lookup results are cached. The admin UI includes an input (templates/admin.php) and frontend wiring (`js/settings.js`); `SettingsController` persists the value (stored sanitized as an integer string). Default fallback is `86400` seconds.
 - **Access Control**: Added `allowed_groups` setting to restrict application access to specific user groups.
 - **Force Lookup**: Added support for forcing lookup updates via API (bypassing cache).
+- **Billing Configuration**: Added settings for `tax_rates` and `payment_periods` to the admin panel, which are exposed via the `getDomain` API endpoint.
 
 ### Changed
 - **Refactored RDAP Logic**: Moved RDAP lookup functionality from `RdapDomainRepository` to `RdapLookupService` for better separation of concerns.

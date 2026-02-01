@@ -28,6 +28,11 @@ class DbDomainRepository implements IDomainRepository
             if (isset($row['last_lookup_data'])) {
                 $row['last_lookup_data'] = json_decode($row['last_lookup_data'], true);
             }
+            // Merge price, tax, payment period into configuration for frontend consumption
+            if (isset($row['price'])) $row['configuration']['price'] = $row['price'];
+            if (isset($row['tax_rate'])) $row['configuration']['tax_rate'] = $row['tax_rate'];
+            if (isset($row['payment_period'])) $row['configuration']['payment_period'] = $row['payment_period'];
+            
             return $row;
         }, $rows);
     }
@@ -52,6 +57,10 @@ class DbDomainRepository implements IDomainRepository
             } else {
                 $row['configuration'] = [];
             }
+            // Merge price, tax, payment period into configuration for frontend consumption
+            if (isset($row['price'])) $row['configuration']['price'] = $row['price'];
+            if (isset($row['tax_rate'])) $row['configuration']['tax_rate'] = $row['tax_rate'];
+            if (isset($row['payment_period'])) $row['configuration']['payment_period'] = $row['payment_period'];
         }
         return $rows;
     }
@@ -70,6 +79,10 @@ class DbDomainRepository implements IDomainRepository
             if (isset($row['last_lookup_data'])) {
                 $row['last_lookup_data'] = json_decode($row['last_lookup_data'], true);
             }
+            // Merge price, tax, payment period into configuration for frontend consumption
+            if (isset($row['price'])) $row['configuration']['price'] = $row['price'];
+            if (isset($row['tax_rate'])) $row['configuration']['tax_rate'] = $row['tax_rate'];
+            if (isset($row['payment_period'])) $row['configuration']['payment_period'] = $row['payment_period'];
             return $row;
         }
         return null;
@@ -96,6 +109,10 @@ class DbDomainRepository implements IDomainRepository
             } else {
                 $row['configuration'] = [];
             }
+            // Merge price, tax, payment period into configuration for frontend consumption
+            if (isset($row['price'])) $row['configuration']['price'] = $row['price'];
+            if (isset($row['tax_rate'])) $row['configuration']['tax_rate'] = $row['tax_rate'];
+            if (isset($row['payment_period'])) $row['configuration']['payment_period'] = $row['payment_period'];
             return $row;
         }
         return null;
@@ -115,6 +132,10 @@ class DbDomainRepository implements IDomainRepository
             } else {
                 $row['configuration'] = [];
             }
+            // Merge price, tax, payment period into configuration for frontend consumption
+            if (isset($row['price'])) $row['configuration']['price'] = $row['price'];
+            if (isset($row['tax_rate'])) $row['configuration']['tax_rate'] = $row['tax_rate'];
+            if (isset($row['payment_period'])) $row['configuration']['payment_period'] = $row['payment_period'];
             return $row;
         }
         return null;
@@ -128,6 +149,9 @@ class DbDomainRepository implements IDomainRepository
         if (isset($cfgForStorage['owner'])) {
             unset($cfgForStorage['owner']);
         }
+        if (isset($cfgForStorage['price'])) unset($cfgForStorage['price']);
+        if (isset($cfgForStorage['tax_rate'])) unset($cfgForStorage['tax_rate']);
+        if (isset($cfgForStorage['payment_period'])) unset($cfgForStorage['payment_period']);
 
         $query = $this->db->getQueryBuilder();
         $query->insert('domain_manager_domains')
@@ -140,6 +164,16 @@ class DbDomainRepository implements IDomainRepository
             $query->setValue('owner', $query->createNamedParameter($owner));
         }
 
+        if (isset($configuration['price'])) {
+            $query->setValue('price', $query->createNamedParameter($configuration['price']));
+        }
+        if (isset($configuration['tax_rate'])) {
+            $query->setValue('tax_rate', $query->createNamedParameter($configuration['tax_rate']));
+        }
+        if (isset($configuration['payment_period'])) {
+            $query->setValue('payment_period', $query->createNamedParameter($configuration['payment_period']));
+        }
+
         $this->db->executeUpdate($query->getSQL(), $query->getParameters(), $query->getParameterTypes());
     }
 
@@ -150,6 +184,9 @@ class DbDomainRepository implements IDomainRepository
         if (isset($cfgForStorage['owner'])) {
             unset($cfgForStorage['owner']);
         }
+        if (isset($cfgForStorage['price'])) unset($cfgForStorage['price']);
+        if (isset($cfgForStorage['tax_rate'])) unset($cfgForStorage['tax_rate']);
+        if (isset($cfgForStorage['payment_period'])) unset($cfgForStorage['payment_period']);
 
         $query = $this->db->getQueryBuilder();
         $query->update('domain_manager_domains')
@@ -160,6 +197,16 @@ class DbDomainRepository implements IDomainRepository
 
         if ($owner !== null) {
             $query->set('owner', $query->createNamedParameter($owner));
+        }
+
+        if (isset($configuration['price'])) {
+            $query->set('price', $query->createNamedParameter($configuration['price']));
+        }
+        if (isset($configuration['tax_rate'])) {
+            $query->set('tax_rate', $query->createNamedParameter($configuration['tax_rate']));
+        }
+        if (isset($configuration['payment_period'])) {
+            $query->set('payment_period', $query->createNamedParameter($configuration['payment_period']));
         }
 
         $this->db->executeUpdate($query->getSQL(), $query->getParameters(), $query->getParameterTypes());
@@ -189,6 +236,10 @@ class DbDomainRepository implements IDomainRepository
             } else {
                 $row['configuration'] = [];
             }
+            // Merge price, tax, payment period into configuration for frontend consumption
+            if (isset($row['price'])) $row['configuration']['price'] = $row['price'];
+            if (isset($row['tax_rate'])) $row['configuration']['tax_rate'] = $row['tax_rate'];
+            if (isset($row['payment_period'])) $row['configuration']['payment_period'] = $row['payment_period'];
         }
         return $rows;
     }

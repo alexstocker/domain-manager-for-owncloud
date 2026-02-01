@@ -1,6 +1,82 @@
 #app-content {
     background-color: #fff;
-    margin-left: 0;
+    margin-left: 250px;
+    transition: margin-left 0.3s ease;
+}
+
+#app-navigation {
+    width: 250px;
+    height: 100%;
+    float: left;
+    box-sizing: border-box;
+    background-color: #fff;
+    padding-bottom: 44px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border-right: 1px solid #eee;
+    overflow-y: auto;
+    position: fixed;
+    top: 45px;
+    left: 0;
+    z-index: 1000;
+}
+
+#app-navigation ul {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+#app-navigation li {
+    position: relative;
+    box-sizing: border-box;
+}
+
+#app-navigation li > a {
+    display: block;
+    width: 100%;
+    line-height: 44px;
+    min-height: 44px;
+    padding: 0 12px;
+    overflow: hidden;
+    box-sizing: border-box;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: #000;
+    opacity: 0.57;
+}
+
+#app-navigation li > a:hover,
+#app-navigation li > a:focus {
+    opacity: 1;
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+#app-navigation li > a.active {
+    opacity: 1;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+#app-navigation .app-navigation-entry-header {
+    padding: 10px 12px 5px;
+    color: #999;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 11px;
+    margin-top: 10px;
+}
+
+#app-navigation .utils {
+    float: right;
+    color: #999;
+    padding-left: 5px;
 }
 
 #add-domain-form input[type="text"] {
@@ -197,6 +273,15 @@
 /* ensure drawer-actions hidden state works */
 .drawer-actions.hidden {
     display: none;
+}
+
+@media (max-width: 768px) {
+    #app-navigation {
+        display: none;
+    }
+    #app-content {
+        margin-left: 0;
+    }
 }
 
 @media (max-width: 600px) {

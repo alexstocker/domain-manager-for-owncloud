@@ -103,6 +103,16 @@
             <input type="number" id="lookup-cache-ttl" name="lookup_cache_ttl" min="1" placeholder="86400" />
         </p>
 
+        <h3>Billing</h3>
+        <p>
+            <label for="tax-rates">Tax Rates (comma-separated, e.g. 0,10,20)</label>
+            <input type="text" id="tax-rates" name="tax_rates" placeholder="0,10,20" />
+        </p>
+        <p>
+            <label for="payment-periods">Payment Periods (comma-separated, e.g. monthly,yearly)</label>
+            <input type="text" id="payment-periods" name="payment_periods" placeholder="monthly,yearly" />
+        </p>
+
         <p>
             <button id="save-settings-btn" type="submit">Save Settings</button>
             <span id="save-status"></span>
