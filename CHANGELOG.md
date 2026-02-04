@@ -19,6 +19,7 @@ All notable changes to the Domain Manager app will be documented in this file.
 - **Billing Configuration**: Added settings for `tax_rates` and `payment_periods` to the admin panel, which are exposed via the `getDomain` API endpoint.
 
 ### Changed
+- **Moved Settings** to User space (User->Personal->Additional)
 - **Refactored RDAP Logic**: Moved RDAP lookup functionality from `RdapDomainRepository` to `RdapLookupService` for better separation of concerns.
 - **Automated Lookup Selection**: `PageController::lookup` now automatically selects the appropriate lookup service via `LookupServiceFacade`, removing the need for a `service` parameter in the API call.
 - **Lookup caching configurable**: Replaced the hardcoded cache TTL of `86400` seconds inside `PageController::lookup` with the configurable `lookup_cache_ttl` app setting; the controller validates a minimum of `1` second and falls back to `86400` if the stored value is invalid.

@@ -1,31 +1,6 @@
 $(document).ready(function() {
-    const form = $('#domain-manager-admin-form');
+    const form = $('#domain-manager-personal-form');
     const status = $('#save-status');
-
-    function loadSettings() {
-        $.getJSON(OC.generateUrl('/apps/domain_manager/api/settings'), function(data) {
-            $('#backend-select').val(data.backend);
-            $('#allowed-groups').val(data.allowed_groups);
-            $('#remote-url').val(data.remote_url);
-            $('#cloudflare-token').val(data.cloudflare_token);
-            $('#ispconfig-enabled').prop('checked', data.ispconfig_enabled === 'yes');
-            $('#ispconfig-url').val(data.ispconfig_url);
-            $('#ispconfig-user').val(data.ispconfig_user);
-            $('#robot-enabled').prop('checked', data.robot_enabled === 'yes');
-            $('#robot-url').val(data.robot_url);
-            $('#robot-user').val(data.robot_user);
-            $('#easyname-enabled').prop('checked', data.easyname_enabled === 'yes');
-            $('#easyname-url').val(data.easyname_url);
-            $('#easyname-user').val(data.easyname_user);
-            $('#easyname-key').val(data.easyname_user);
-            $('#rdap-enabled').prop('checked', data.rdap_enabled === 'yes');
-            $('#cctld-lookup-enabled').prop('checked', data.cctld_lookup_enabled === 'yes');
-            // lookup cache TTL
-            $('#lookup-cache-ttl').val(data.lookup_cache_ttl || '86400');
-            $('#tax-rates').val(data.tax_rates);
-            $('#payment-periods').val(data.payment_periods);
-        });
-    }
 
     form.on('submit', function(e) {
         e.preventDefault();
@@ -65,6 +40,4 @@ $(document).ready(function() {
                 status.text('Error saving settings').css('color', 'red');
             });
     });
-
-    loadSettings();
 });

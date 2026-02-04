@@ -15,4 +15,7 @@
         <migration>OCA\DomainManager\Migration</migration>
     </migrations>
     <use-migrations>true</use-migrations>
+    <settings>
+        <personal>OCA\DomainManager\Settings\Personal</personal>
+    </settings>
 </info>

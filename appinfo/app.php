@@ -7,8 +7,6 @@ namespace OCA\DomainManager;
 use OCP\AppFramework\App;
 use OCP\Util;
 
-\OCP\App::registerAdmin('domain_manager', 'admin');
-
 \OC::$server->getNavigationManager()->add(function () {
     $urlGenerator = \OC::$server->getURLGenerator();
     $l = \OC::$server->getL10N('domain_manager');

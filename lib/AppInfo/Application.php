@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace OCA\DomainManager\AppInfo;
 
 use OCA\DomainManager\Service\Lookup\CountryCodeTldLookupService;
+use OCA\DomainManager\Settings\Personal;
 use OCP\AppFramework\App;
 use OCA\DomainManager\Controller\PageController;
-use OCA\DomainManager\Controller\SettingsController;
 use OCA\DomainManager\Service\DomainService;
 use OCA\DomainManager\Service\Lookup\LookupServiceFacade;
 use OCA\DomainManager\Service\Lookup\RdapLookupService;
@@ -18,6 +18,7 @@ use OCA\DomainManager\Provider\ISPConfigDomainRepository;
 use OCA\DomainManager\Provider\CloudflareDomainRepository;
 use OCA\DomainManager\Provider\RobotApiDomainRepository;
 use OCA\DomainManager\Db\DomainProviderManager;
+use OCP\Settings\ISettings;
 
 class Application extends App
 {
@@ -28,13 +29,24 @@ class Application extends App
         $container = $this->getContainer();
         $server = $container->getServer();
 
+        $container->registerService('PersonalSettings', function ($c) use ($server) {
+            return new Personal(
+                $server->getConfig(),
+                $server->getUserSession()
+            );
+        });
+
+        $container->registerAlias(ISettings::class, 'PersonalSettings');
+
         $container->registerService('DomainProviderManager', function ($c) use ($server) {
             $config = $server->getConfig();
             $manager = new DomainProviderManager();
+            $user = $server->getUserSession()->getUser();
+            $userId = $user ? $user->getUID() : '';
 
-            $backendType = $config->getAppValue('domain_manager', 'backend', 'local');
+            $backendType = $config->getUserValue($userId, 'domain_manager', 'backend', 'local');
             if ($backendType === 'remote') {
-                $apiUrl = $config->getAppValue('domain_manager', 'remote_url', 'http://localhost:8080');
+                $apiUrl = $config->getUserValue($userId, 'domain_manager', 'remote_url', 'http://localhost:8080');
                 $storageRepo = new RemoteDomainRepository(
                     $server->getHTTPClientService(),
                     $apiUrl
@@ -46,7 +58,7 @@ class Application extends App
             }
             $manager->setStorageRepository($storageRepo);
 
-            $cloudflareToken = $config->getAppValue('domain_manager', 'cloudflare_token', '');
+            $cloudflareToken = $config->getUserValue($userId, 'domain_manager', 'cloudflare_token', '');
             if ($cloudflareToken !== '') {
                 $manager->registerProvider('cloudflare', 'Cloudflare', new CloudflareDomainRepository(
                     $server->getHTTPClientService(),
@@ -56,11 +68,11 @@ class Application extends App
                 ]);
             }
 
-            $robotEnabled = $config->getAppValue('domain_manager', 'robot_enabled', 'no');
+            $robotEnabled = $config->getUserValue($userId, 'domain_manager', 'robot_enabled', 'no');
             if ($robotEnabled === 'yes') {
-                $apiUrl = $config->getAppValue('domain_manager', 'robot_url', '');
-                $user = $config->getAppValue('domain_manager', 'robot_user', '');
-                $pass = $config->getAppValue('domain_manager', 'robot_pass', '');
+                $apiUrl = $config->getUserValue($userId, 'domain_manager', 'robot_url', '');
+                $user = $config->getUserValue($userId, 'domain_manager', 'robot_user', '');
+                $pass = $config->getUserValue($userId, 'domain_manager', 'robot_pass', '');
                 $manager->registerProvider('robot', 'Robot API (Webtropia/WIIT)', new RobotApiDomainRepository(
                     $server->getHTTPClientService(),
                     $apiUrl,
@@ -73,11 +85,11 @@ class Application extends App
                 ]);
             }
 
-            $ispconfigEnabled = $config->getAppValue('domain_manager', 'ispconfig_enabled', 'no');
+            $ispconfigEnabled = $config->getUserValue($userId, 'domain_manager', 'ispconfig_enabled', 'no');
             if ($ispconfigEnabled === 'yes') {
-                $apiUrl = $config->getAppValue('domain_manager', 'ispconfig_url', '');
-                $user = $config->getAppValue('domain_manager', 'ispconfig_user', '');
-                $pass = $config->getAppValue('domain_manager', 'ispconfig_pass', '');
+                $apiUrl = $config->getUserValue($userId, 'domain_manager', 'ispconfig_url', '');
+                $user = $config->getUserValue($userId, 'domain_manager', 'ispconfig_user', '');
+                $pass = $config->getUserValue($userId, 'domain_manager', 'ispconfig_pass', '');
                 $manager->registerProvider('ispconfig', 'ISPConfig', new ISPConfigDomainRepository(
                     $server->getHTTPClientService(),
                     $apiUrl,
@@ -90,13 +102,13 @@ class Application extends App
                 ]);
             }
 
-            $easynameEnabled = $config->getAppValue('domain_manager', 'easyname_enabled', 'no');
+            $easynameEnabled = $config->getUserValue($userId, 'domain_manager', 'easyname_enabled', 'no');
             if ($easynameEnabled === 'yes') {
-                $apiUrl = $config->getAppValue('domain_manager', 'easyname_url', 'https://api.easyname.com');
-                $user = $config->getAppValue('domain_manager', 'easyname_user', '');
-                $key = $config->getAppValue('domain_manager', 'easyname_key', '');
-                $authSalt = $config->getAppValue('domain_manager', 'easyname_auth_salt', '');
-                $signingSalt = $config->getAppValue('domain_manager', 'easyname_signing_salt', '');
+                $apiUrl = $config->getUserValue($userId, 'domain_manager', 'easyname_url', 'https://api.easyname.com');
+                $user = $config->getUserValue($userId, 'domain_manager', 'easyname_user', '');
+                $key = $config->getUserValue($userId, 'domain_manager', 'easyname_key', '');
+                $authSalt = $config->getUserValue($userId, 'domain_manager', 'easyname_auth_salt', '');
+                $signingSalt = $config->getUserValue($userId, 'domain_manager', 'easyname_signing_salt', '');
                 $manager->registerProvider('easyname', 'Easyname', new EasynameDomainRepository(
                     $server->getHTTPClientService(),
                     $apiUrl,
@@ -161,12 +173,12 @@ class Application extends App
             );
         });
 
-        $container->registerService('SettingsController', function ($c) use ($server) {
-            return new SettingsController(
-                $c->query('AppName'),
-                $c->query('Request'),
-                $server->getConfig()
-            );
-        });
+//        $container->registerService('SettingsController', function ($c) use ($server) {
+//            return new SettingsController(
+//                $c->query('AppName'),
+//                $c->query('Request'),
+//                $server->getConfig()
+//            );
+//        });
     }
 }
