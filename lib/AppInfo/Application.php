@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace OCA\DomainManager\AppInfo;
 
+use OCA\DomainManager\Controller\SettingsController;
 use OCA\DomainManager\Service\Lookup\CountryCodeTldLookupService;
 use OCA\DomainManager\Settings\Personal;
 use OCP\AppFramework\App;
@@ -173,12 +174,13 @@ class Application extends App
             );
         });
 
-//        $container->registerService('SettingsController', function ($c) use ($server) {
-//            return new SettingsController(
-//                $c->query('AppName'),
-//                $c->query('Request'),
-//                $server->getConfig()
-//            );
-//        });
+        $container->registerService('SettingsController', function ($c) use ($server) {
+            return new SettingsController(
+                $c->query('AppName'),
+                $c->query('Request'),
+                $server->getConfig(),
+                $server->getUserSession()
+            );
+        });
     }
 }

@@ -16,6 +16,6 @@ return [
         ['name' => 'page#lookupForce', 'url' => '/api/lookup/{domain}/{force}', 'verb' => 'GET'],
         ['name' => 'page#assignOwner', 'url' => '/api/domains/{id}/assign', 'verb' => 'POST'],
 //        ['name' => 'settings#getSettings', 'url' => '/api/settings', 'verb' => 'GET'],
-//        ['name' => 'settings#setSettings', 'url' => '/api/settings', 'verb' => 'POST']
+        ['name' => 'settings#setSettings', 'url' => '/api/settings', 'verb' => 'POST']
     ]
 ];
