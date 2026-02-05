@@ -132,9 +132,11 @@ class Application extends App
         $container->registerService('LookupServiceFacade', function ($c) use ($server) {
             $facade = new LookupServiceFacade();
             $config = $server->getConfig();
+            $user = $server->getUserSession()->getUser();
+            $userId = $user ? $user->getUID() : '';
 
             // Register specific services first
-            $cctldEnabled = $config->getAppValue('domain_manager', 'cctld_lookup_enabled', 'no');
+            $cctldEnabled = $config->getUserValue($userId, 'domain_manager', 'cctld_lookup_enabled', 'no');
             if ($cctldEnabled === 'yes') {
                 $facade->registerService('cctld', new CountryCodeTldLookupService(
                     $server->getHTTPClientService()
@@ -142,7 +144,7 @@ class Application extends App
             }
 
             // Register generic fallback service last
-            $rdapEnabled = $config->getAppValue('domain_manager', 'rdap_enabled', 'no');
+            $rdapEnabled = $config->getUserValue($userId,'domain_manager', 'rdap_enabled', 'no');
             if ($rdapEnabled === 'yes') {
                 $facade->registerService('rdap', new RdapLookupService(
                     $server->getHTTPClientService()

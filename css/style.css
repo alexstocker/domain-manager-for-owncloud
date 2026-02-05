@@ -276,11 +276,17 @@
 }
 
 @media (max-width: 768px) {
-    #app-navigation {
-        display: none;
-    }
+    /*#app-navigation {*/
+    /*    display: none;*/
+    /*}*/
     #app-content {
         margin-left: 0;
+    }
+    #headerPrice,
+    td.price-cell,
+    #headerProvider,
+    td.provider-cell {
+        display: none;
     }
 }
 
