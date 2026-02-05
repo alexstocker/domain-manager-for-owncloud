@@ -288,6 +288,22 @@
     td.provider-cell {
         display: none;
     }
+    #add-domain-form input[type="text"] {
+        min-width: unset;
+    }
+    #add-domain-form button[type="submit"] {
+        color: transparent;
+        width: 3em;
+        display: flex;
+        align-items: center;     /* vertical */
+        justify-content: center;
+    }
+    #add-domain-form button[type="submit"]:before {
+        content: "✓";
+        color: white;
+        font-size: 2em;
+        margin-left: 2em;
+    }
 }
 
 @media (max-width: 600px) {
