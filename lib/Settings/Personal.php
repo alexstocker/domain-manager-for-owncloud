@@ -11,8 +11,8 @@ use OCP\Settings\ISettings;
 
 class Personal implements ISettings
 {
-    private IConfig $config;
-    private IUserSession $userSession;
+    private $config;
+    private $userSession;
 
     public function __construct(IConfig $config, IUserSession $userSession)
     {
