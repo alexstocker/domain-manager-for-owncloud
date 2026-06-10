@@ -54,6 +54,9 @@ class SettingsController extends Controller
         return new DataResponse($settings);
     }
 
+    /**
+     * @NoAdminRequired
+     */
     public function setSettings()
     {
         $userId = $this->userSession->getUser()->getUID();
