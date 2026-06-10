@@ -62,7 +62,7 @@ class PageController extends Controller
             $user = $this->userSession->getUser();
             $uid = $user ? $user->getUID() : null;
 
-            $domains = $this->domainService->getAllForUser($uid, $this->isAdmin);
+            $domains = $this->domainService->getAllForUser($uid);
             return new DataResponse($domains);
         } catch (\Exception $e) {
             return new DataResponse(['error' => 'Could not list domains: ' . $e->getMessage()], 500);
