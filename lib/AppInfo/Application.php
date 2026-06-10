@@ -7,6 +7,7 @@ namespace OCA\DomainManager\AppInfo;
 use OCA\DomainManager\Controller\SettingsController;
 use OCA\DomainManager\Service\Lookup\CountryCodeTldLookupService;
 use OCA\DomainManager\Settings\Personal;
+use OCA\DomainManager\Settings\PersonalSection;
 use OCP\AppFramework\App;
 use OCA\DomainManager\Controller\PageController;
 use OCA\DomainManager\Service\DomainService;
@@ -38,6 +39,12 @@ class Application extends App
         });
 
         $container->registerAlias(ISettings::class, 'PersonalSettings');
+
+        $container->registerService(PersonalSection::class, function ($c) use ($server) {
+            return new PersonalSection(
+                $server->getL10N('domain_manager')
+            );
+        });
 
         $container->registerService('DomainProviderManager', function ($c) use ($server) {
             $config = $server->getConfig();

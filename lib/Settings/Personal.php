@@ -51,7 +51,7 @@ class Personal implements ISettings
 
     public function getSectionID(): string
     {
-        return 'additional';
+        return 'domain_manager';
     }
 
     public function getPriority(): int

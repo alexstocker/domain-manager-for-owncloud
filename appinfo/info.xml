@@ -4,7 +4,7 @@
     <name>Domain Manager</name>
     <namespace>DomainManager</namespace>
     <description>Minimal dev app for ownCloud</description>
-    <version>0.2.0</version>
+    <version>0.2.1</version>
     <dependencies>
         <owncloud min-version="10" max-version="11"/>
         <nextcloud min-version="14" max-version="21"/>
@@ -18,4 +18,7 @@
     <settings>
         <personal>OCA\DomainManager\Settings\Personal</personal>
     </settings>
+    <settings-sections>
+        <personal>OCA\DomainManager\Settings\PersonalSection</personal>
+    </settings-sections>
 </info>
