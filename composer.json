@@ -11,9 +11,18 @@
         }
     ],
     "require": {
-        "php": ">=7.0.0 <8.1.0",
+        "php": "=7.2 || >=7.4 || >=8.0 || >=8.1 || >=8.2 || >=8.3",
         "ext-json": "*",
         "ext-pdo": "*"
+    },
+    "allow-plugins": {
+        "bamarni/composer-bin-plugin": true,
+        "dealerdirect/phpcodesniffer-composer-installer": true
+    },
+    "require-dev": {
+        "bamarni/composer-bin-plugin": "^1.8",
+        "squizlabs/php_codesniffer": "4.x-dev",
+        "phpcompatibility/php-compatibility": "^10.0@dev"
     },
     "autoload": {
         "psr-4": {

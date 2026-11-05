@@ -5,6 +5,7 @@ All notable changes to the Domain Manager app will be documented in this file.
 ## 0.0.2 (UNRELEASED)
 
 ### Added
+- [NOREF] Added OC11 support
 - **Extensible Lookup Service Architecture**: Implemented `ILookupService`, `RdapLookupService`, `CctldLookupService`, and `LookupServiceFacade` using a Chain of Responsibility pattern for intelligent service selection based on domain TLD.
 - **ccTLD-Specific Lookup Service**: Added support for `.at` and `.de` domains with dedicated RDAP endpoints.
 - **Easyname Domain Provider (Placeholder)**: Introduced framework for easyname.eu integration, including `EasynameDomainRepository`, corresponding settings in `SettingsController`, and admin UI in `templates/admin.php`.
